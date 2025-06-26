@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Resizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4 text-center">Image Resizer</h2>
+        <input type="file" id="imageInput" accept="image/*" class="w-full mb-4 p-2 border rounded">
+        <img id="imagePreview" class="w-full max-h-60 object-contain mb-4 hidden" alt="Image Preview">
+        
+        <div class="flex gap-4">
+            <input type="number" id="widthInput" placeholder="Width" class="w-1/2 p-2 border rounded" min="1">
+            <input type="number" id="heightInput" placeholder="Height" class="w-1/2 p-2 border rounded" min="1">
+        </div>
+        <div class="mt-4">
+            <label for="scaleRange" class="block text-sm font-medium">Scale Image (%)</label>
+            <input type="range" id="scaleRange" min="10" max="100" value="100" class="w-full">
+        </div>
+        <canvas id="canvas" class="hidden"></canvas>
+        
+        <div class="flex gap-4 mt-4">
+            <button id="resizeBtn" class="w-1/2 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">Resize Image</button>
+            <button id="removeBtn" class="w-1/2 bg-red-500 text-white py-2 rounded hidden">Remove Image</button>
+        </div>
+        <a id="downloadLink" class="w-full mt-4 block text-center bg-green-500 text-white py-2 rounded hidden">Download Resized Image</a>
+    </div>
+
+    <script>
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const widthInput = document.getElementById('widthInput');
+        const heightInput = document.getElementById('heightInput');
+        const scaleRange = document.getElementById('scaleRange');
+        const resizeBtn = document.getElementById('resizeBtn');
+        const removeBtn = document.getElementById('removeBtn');
+        const downloadLink = document.getElementById('downloadLink');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let img = new Image();
+        let originalWidth, originalHeight;
+        
+        imageInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = e.target.result;
+                    img.onload = function () {
+                        imagePreview.src = img.src;
+                        imagePreview.classList.remove('hidden');
+                        widthInput.value = img.width;
+                        heightInput.value = img.height;
+                        originalWidth = img.width;
+                        originalHeight = img.height;
+                        imageInput.disabled = true;
+                        removeBtn.classList.remove('hidden');
+                    };
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        resizeBtn.addEventListener('click', function () {
+            let width, height;
+            if (scaleRange.value !== "100") {
+                const scale = scaleRange.value / 100;
+                width = originalWidth * scale;
+                height = originalHeight * scale;
+            } else {
+                width = parseInt(widthInput.value);
+                height = parseInt(heightInput.value);
+            }
+
+            if (!img.src) {
+                alert('Please upload an image.');
+                return;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            downloadLink.href = canvas.toDataURL('image/png');
+            downloadLink.download = 'resized-image.png';
+            downloadLink.classList.remove('hidden');
+        });
+
+        scaleRange.addEventListener('input', function () {
+            widthInput.value = Math.round(originalWidth * (scaleRange.value / 100));
+            heightInput.value = Math.round(originalHeight * (scaleRange.value / 100));
+        });
+        
+        removeBtn.addEventListener('click', function () {
+            imageInput.value = "";
+            imagePreview.classList.add('hidden');
+            imageInput.disabled = false;
+            removeBtn.classList.add('hidden');
+            downloadLink.classList.add('hidden');
+            widthInput.value = "";
+            heightInput.value = "";
+            scaleRange.value = 100;
+        });
+    </script>
+</body>
+</html>

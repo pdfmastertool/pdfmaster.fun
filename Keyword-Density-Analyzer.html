@@ -1,0 +1,608 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="author" content="Emprux">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Analyze your content's keyword density to optimize for SEO. Our free tool identifies overused keywords and helps improve your content's search engine performance.">
+    <meta name="keywords" content="keyword density, SEO analysis, keyword optimization, content analysis, SEO tools">
+    
+    <!-- Favicon -->
+    
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./src/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Keyword Density Analyzer",
+      "url": "https://Emprux.com/Keyword_Density_Analyzer.html",
+      "description": "A free online tool to analyze your content's keyword density and improve your SEO strategy.",
+      "applicationCategory": "SEOApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "operatingSystem": "Any",
+      "author": {
+        "@type": "Organization",
+        "name": "Emprux"
+      }
+    }
+    </script>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- Header -->
+    <header class='shadow-md font-sans tracking-wide relative z-50'>
+        <nav>
+            <div class='flex flex-wrap items-center justify-between gap-4 px-6 md:px-10 py-4 bg-white min-h-[70px]'>
+                <a href="index.html" class="flex items-center gap-2">
+                    <img src="./images/logo.png" alt="logo" class='w-[40px]' />
+                    <span class="font-bold text-xl text-blue-500 hidden md:block">Emprux</span>
+                </a>
+                
+                <div id="collapseMenu"
+                    class='max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50'>
+                    <button id="toggleClose" class='lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white w-9 h-9 flex items-center justify-center border'>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 fill-black" viewBox="0 0 320.591 320.591">
+                            <path d="M30.391 318.583a30.37 30.37 0 0 1-21.56-7.288c-11.774-11.844-11.774-30.973 0-42.817L266.643 10.665c12.246-11.459 31.462-10.822 42.921 1.424 10.362 11.074 10.966 28.095 1.414 39.875L51.647 311.295a30.366 30.366 0 0 1-21.256 7.288z" data-original="#000000"></path>
+                            <path d="M287.9 318.583a30.37 30.37 0 0 1-21.257-8.806L8.83 51.963C-2.078 39.225-.595 20.055 12.143 9.146c11.369-9.736 28.136-9.736 39.504 0l259.331 257.813c12.243 11.462 12.876 30.679 1.414 42.922-.456.487-.927.958-1.414 1.414a30.368 30.368 0 0 1-23.078 7.288z" data-original="#000000"></path>
+                        </svg>
+                    </button>
+                    
+                    <ul class='lg:flex lg:gap-x-5 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50'>
+                        <li class='mb-6 hidden max-lg:block'>
+                            <a href="index.html" class="flex items-center gap-2">
+                                <img src="./images/logo.png" alt="logo" class='w-[40px]' />
+                                <span class="font-bold text-xl text-blue-500">Emprux</span>
+                            </a>
+                        </li>
+                        <li class='max-lg:border-b max-lg:py-3 px-3'>
+                            <a href='index.html' class='hover:text-blue-500 text-gray-700 block font-bold text-[15px]'>Home</a>
+                        </li>
+                        <li class='max-lg:border-b max-lg:py-3 px-3'>
+                            <a href='contactus.html' class='hover:text-blue-500 text-gray-700 block font-bold text-[15px]'>Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class='flex items-center lg:hidden'>
+                    <button id="toggleMenu" class='outline-none bg-transparent border-transparent'>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 fill-black" viewBox="0 0 24 24">
+                            <path
+                                d="M3 8h18a1 1 0 0 0 0-2H3a1 1 0 0 0 0 2Zm18 8H3a1 1 0 0 0 0-2h18a1 1 0 0 0 0 2Zm0-5H3a1 1 0 0 0 0 2h18a1 1 0 0 0 0-2Z"
+                                data-original="#000000"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-500 mb-3">Keyword Density Analyzer</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Analyze your content's keyword density to optimize for search engines. Avoid keyword stuffing and improve your SEO strategy with this free tool.</p>
+        </div>
+
+        <!-- Step-by-Step Workflow -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Steps Header -->
+                <div class="bg-blue-500 p-4">
+                    <h2 class="text-xl font-bold text-white text-center">How To Use</h2>
+                </div>
+
+                <!-- Steps -->
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Step 1 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">1</div>
+                                <h3 class="font-semibold text-lg">Enter Content or URL</h3>
+                            </div>
+                            <p class="text-gray-600">Paste your content or enter a URL to analyze the page content directly.</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">2</div>
+                                <h3 class="font-semibold text-lg">Set Analysis Options</h3>
+                            </div>
+                            <p class="text-gray-600">Choose minimum word length and whether to exclude common words.</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">3</div>
+                                <h3 class="font-semibold text-lg">View Results</h3>
+                            </div>
+                            <p class="text-gray-600">Get detailed analysis of keyword usage, frequency, and density percentages.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analyzer Tool -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex justify-center mb-6 text-blue-500 text-5xl">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                
+                <!-- Tab Navigation -->
+                <div class="border-b border-gray-200 mb-6">
+                    <ul class="flex flex-wrap -mb-px">
+                        <li class="mr-2">
+                            <button id="tab-text" class="inline-block py-2 px-4 text-blue-500 border-b-2 border-blue-500 font-medium active-tab">
+                                Paste Text
+                            </button>
+                        </li>
+                        <li class="mr-2">
+                            <button id="tab-url" class="inline-block py-2 px-4 text-gray-500 hover:text-gray-600 font-medium">
+                                Analyze URL
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                
+                <!-- Text Input Tab Content -->
+                <div id="text-content" class="tab-content">
+                    <div class="mb-6">
+                        <label for="content-input" class="block text-sm font-medium text-gray-700 mb-1">Your Content</label>
+                        <textarea id="content-input" 
+                                rows="8"
+                                class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                                placeholder="Paste your content here for keyword density analysis..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- URL Input Tab Content -->
+                <div id="url-content" class="tab-content hidden">
+                    <div class="mb-6">
+                        <label for="url-input" class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                        <div class="flex">
+                            <input type="url" 
+                                   id="url-input" 
+                                   class="flex-1 p-3 border border-gray-300 rounded-l-lg focus:ring-blue-500 focus:border-blue-500" 
+                                   placeholder="https://example.com/page" />
+                            <button id="fetch-url" 
+                                    class="px-4 bg-blue-100 text-blue-700 border border-l-0 border-blue-300 rounded-r-lg hover:bg-blue-200">
+                                Fetch
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1">Enter the full URL including http:// or https://</p>
+                    </div>
+                    
+                    <div id="fetched-content-container" class="mb-6 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fetched Content</label>
+                        <div id="fetched-preview" class="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 max-h-40 overflow-y-auto text-sm">
+                            <!-- Fetched content will be displayed here -->
+                        </div>
+                        <div class="flex justify-end mt-2">
+                            <button id="use-fetched-content" class="text-blue-500 text-sm hover:text-blue-700">
+                                Use This Content
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="w-full md:w-1/2">
+                        <label for="min-word-length" class="block text-sm font-medium text-gray-700 mb-1">Minimum Word Length</label>
+                        <select id="min-word-length" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                            <option value="1">1 character</option>
+                            <option value="2">2 characters</option>
+                            <option value="3" selected>3 characters</option>
+                            <option value="4">4 characters</option>
+                            <option value="5">5 characters</option>
+                        </select>
+                    </div>
+                    
+                    <div class="w-full md:w-1/2">
+                        <label for="exclude-common" class="block text-sm font-medium text-gray-700 mb-1">Exclude Common Words</label>
+                        <div class="relative">
+                            <select id="exclude-common" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="yes" selected>Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <button id="analyze-button" 
+                        class="w-full bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex justify-center items-center font-medium">
+                    <i class="fas fa-search mr-2"></i> Analyze Keyword Density
+                </button>
+                
+                <div id="loading-indicator" class="mt-4 text-center hidden">
+                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+                    <p class="text-gray-600 mt-2">Analyzing content...</p>
+                </div>
+                
+                <div id="results-container" class="mt-8 hidden">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Analysis Results</h2>
+                    
+                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                        <div class="flex flex-col md:flex-row justify-between mb-2">
+                            <div><span class="font-medium">Total Words:</span> <span id="total-words">0</span></div>
+                            <div><span class="font-medium">Unique Words:</span> <span id="unique-words">0</span></div>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg overflow-hidden">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="py-2 px-4 text-left">Keyword</th>
+                                    <th class="py-2 px-4 text-center">Count</th>
+                                    <th class="py-2 px-4 text-center">Density</th>
+                                </tr>
+                            </thead>
+                            <tbody id="keyword-results">
+                                <!-- Results will be inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg text-gray-800">
+                        <h3 class="font-bold text-blue-500 mb-2">SEO Recommendations</h3>
+                        <p id="seo-recommendations" class="text-sm">
+                            Analysis pending...
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How It Works Section -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <h2 class="text-2xl font-bold text-blue-500 mb-6 text-center">Why Keyword Density Matters</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Info 1 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Optimize for Search</h3>
+                    <p class="text-gray-600">Proper keyword density helps search engines understand your content's topic and relevance to search queries.</p>
+                </div>
+                
+                <!-- Info 2 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-exclamation-triangle text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Avoid Keyword Stuffing</h3>
+                    <p class="text-gray-600">Too many keywords can trigger search engine penalties. Aim for natural, reader-friendly content.</p>
+                </div>
+                
+                <!-- Info 3 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-balance-scale text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Find the Right Balance</h3>
+                    <p class="text-gray-600">The ideal keyword density is typically 1-2%. Our tool helps you achieve the perfect balance for your content.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>© 2023 Emprux. All rights reserved.</p>
+                <div class="mt-4">
+                    <a href="privacy_policy.html" class="text-gray-300 hover:text-white mx-2">Privacy Policy</a>
+                    <a href="terms_of_service.html" class="text-gray-300 hover:text-white mx-2">Terms of Service</a>
+                    <a href="disclaimer.html" class="text-gray-300 hover:text-white mx-2">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Common words to exclude (if option is selected)
+        const commonWords = ['the', 'and', 'for', 'that', 'this', 'with', 'you', 'are', 'they', 'from', 'have', 'your', 'been', 'were', 'their', 'what', 'will', 'would', 'make', 'when', 'can', 'some', 'more', 'other', 'has', 'about', 'was'];
+
+        // Tab Navigation
+        document.getElementById("tab-text").addEventListener("click", function() {
+            switchTab("text");
+        });
+        
+        document.getElementById("tab-url").addEventListener("click", function() {
+            switchTab("url");
+        });
+        
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('#tab-text, #tab-url').forEach(tab => {
+                tab.classList.remove('text-blue-500', 'border-blue-500');
+                tab.classList.add('text-gray-500');
+            });
+            
+            // Show selected tab content and activate tab
+            if (tabName === 'text') {
+                document.getElementById('text-content').classList.remove('hidden');
+                document.getElementById('tab-text').classList.remove('text-gray-500');
+                document.getElementById('tab-text').classList.add('text-blue-500', 'border-blue-500');
+            } else {
+                document.getElementById('url-content').classList.remove('hidden');
+                document.getElementById('tab-url').classList.remove('text-gray-500');
+                document.getElementById('tab-url').classList.add('text-blue-500', 'border-blue-500');
+            }
+        }
+
+        // URL Fetching
+        document.getElementById("fetch-url").addEventListener("click", fetchUrlContent);
+        
+        async function fetchUrlContent() {
+            const urlInput = document.getElementById("url-input").value.trim();
+            
+            if (!isValidUrl(urlInput)) {
+                alert("Please enter a valid URL including http:// or https://");
+                return;
+            }
+            
+            try {
+                // Show loading state
+                document.getElementById("fetch-url").textContent = "Fetching...";
+                document.getElementById("fetch-url").disabled = true;
+                
+                // Use a proxy server to avoid CORS issues
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlInput)}`;
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                if (data && data.contents) {
+                    // Extract text content from HTML
+                    const tempDiv = document.createElement("div");
+                    tempDiv.innerHTML = data.contents;
+                    
+                    // Remove script and style elements
+                    const scripts = tempDiv.querySelectorAll("script, style, iframe, noscript");
+                    scripts.forEach(element => element.remove());
+                    
+                    // Get text content from body or main content areas
+                    let contentElements = tempDiv.querySelectorAll("article, main, .content, .main-content, #content, #main");
+                    
+                    let extractedText = "";
+                    if (contentElements.length > 0) {
+                        contentElements.forEach(element => {
+                            extractedText += element.textContent + " ";
+                        });
+                    } else {
+                        // Fallback to body if no content containers found
+                        extractedText = tempDiv.textContent;
+                    }
+                    
+                    // Clean up the text
+                    extractedText = extractedText
+                        .replace(/\s+/g, " ")
+                        .trim();
+                    
+                    // Display a preview
+                    document.getElementById("fetched-preview").textContent = extractedText.substring(0, 500) + (extractedText.length > 500 ? "..." : "");
+                    document.getElementById("fetched-content-container").classList.remove("hidden");
+                    
+                    // Store the full text for analysis
+                    document.getElementById("fetched-preview").dataset.fullText = extractedText;
+                } else {
+                    alert("Could not fetch content from the provided URL.");
+                }
+            } catch (error) {
+                alert("Error fetching content: " + error.message);
+            } finally {
+                // Reset button state
+                document.getElementById("fetch-url").textContent = "Fetch";
+                document.getElementById("fetch-url").disabled = false;
+            }
+        }
+        
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // Use fetched content for analysis
+        document.getElementById("use-fetched-content").addEventListener("click", function() {
+            const fullText = document.getElementById("fetched-preview").dataset.fullText;
+            document.getElementById("content-input").value = fullText;
+            switchTab("text");
+        });
+
+        // Analyze button
+        document.getElementById("analyze-button").addEventListener("click", function() {
+            // Show loading indicator
+            document.getElementById("loading-indicator").classList.remove("hidden");
+            document.getElementById("results-container").classList.add("hidden");
+            
+            setTimeout(() => {
+                let content = "";
+                
+                // Get content based on active tab
+                if (!document.getElementById('text-content').classList.contains('hidden')) {
+                    content = document.getElementById("content-input").value.trim();
+                } else {
+                    const fullText = document.getElementById("fetched-preview").dataset.fullText;
+                    content = fullText || "";
+                }
+                
+                if (!content) {
+                    alert("Please enter some content to analyze or fetch it from a URL.");
+                    document.getElementById("loading-indicator").classList.add("hidden");
+                    return;
+                }
+                
+                const minWordLength = parseInt(document.getElementById("min-word-length").value);
+                const excludeCommon = document.getElementById("exclude-common").value === "yes";
+                
+                // Process the content
+                const results = analyzeKeywordDensity(content, minWordLength, excludeCommon);
+                
+                // Display results
+                displayResults(results);
+                
+                // Hide loading indicator
+                document.getElementById("loading-indicator").classList.add("hidden");
+            }, 500); // Small delay for better UX
+        });
+
+        function analyzeKeywordDensity(content, minWordLength, excludeCommon) {
+            // Remove special characters, convert to lowercase and split into words
+            const words = content.toLowerCase()
+                .replace(/[^\w\s]/g, '')
+                .split(/\s+/)
+                .filter(word => word.length >= minWordLength);
+                
+            // Count total words
+            const totalWords = words.length;
+            
+            // Count frequency of each word
+            const wordCounts = {};
+            words.forEach(word => {
+                if (excludeCommon && commonWords.includes(word)) {
+                    return; // Skip common words
+                }
+                wordCounts[word] = (wordCounts[word] || 0) + 1;
+            });
+            
+            // Calculate density and sort by frequency
+            const keywordDensity = Object.keys(wordCounts).map(word => {
+                return {
+                    word: word,
+                    count: wordCounts[word],
+                    density: (wordCounts[word] / totalWords * 100).toFixed(2)
+                };
+            }).sort((a, b) => b.count - a.count);
+            
+            return {
+                totalWords: totalWords,
+                uniqueWords: Object.keys(wordCounts).length,
+                keywords: keywordDensity.slice(0, 20) // Top 20 keywords
+            };
+        }
+
+        function displayResults(results) {
+            // Show results container
+            const resultsContainer = document.getElementById("results-container");
+            resultsContainer.classList.remove("hidden");
+            
+            // Update summary
+            document.getElementById("total-words").textContent = results.totalWords;
+            document.getElementById("unique-words").textContent = results.uniqueWords;
+            
+            // Clear and update keyword table
+            const keywordResults = document.getElementById("keyword-results");
+            keywordResults.innerHTML = "";
+            
+            if (results.keywords.length === 0) {
+                const row = document.createElement("tr");
+                row.innerHTML = `<td colspan="3" class="py-4 text-center text-gray-500">No keywords found that match your criteria.</td>`;
+                keywordResults.appendChild(row);
+            } else {
+                results.keywords.forEach(item => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td class="py-2 px-4 border-b border-gray-200">${item.word}</td>
+                        <td class="py-2 px-4 border-b border-gray-200 text-center">${item.count}</td>
+                        <td class="py-2 px-4 border-b border-gray-200 text-center ${getDensityClass(item.density)}">${item.density}%</td>
+                    `;
+                    keywordResults.appendChild(row);
+                });
+            }
+            
+            // Generate SEO recommendations
+            const seoRecommendations = generateRecommendations(results);
+            document.getElementById("seo-recommendations").textContent = seoRecommendations;
+        }
+
+        function getDensityClass(density) {
+            density = parseFloat(density);
+            if (density > 4) return "text-red-500 font-bold"; // Too high
+            if (density >= 2 && density <= 4) return "text-orange-500"; // Borderline
+            if (density > 1 && density < 2) return "text-green-500 font-bold"; // Optimal
+            return ""; // Too low or normal
+        }
+
+        function generateRecommendations(results) {
+            let recs = [];
+            
+            // Check for keyword density issues
+            const highDensityKeywords = results.keywords.filter(k => parseFloat(k.density) > 3);
+            if (highDensityKeywords.length > 0) {
+                recs.push(`Consider reducing the frequency of these keywords which appear too often: ${highDensityKeywords.map(k => k.word).join(', ')}.`);
+            }
+            
+            // Check for overall content volume
+            if (results.totalWords < 300) {
+                recs.push("Your content is quite short. Consider adding more relevant content (aim for 600+ words) for better SEO results.");
+            }
+            
+            // Check for keyword diversity
+            if (results.uniqueWords / results.totalWords < 0.4) {
+                recs.push("Your content has low word diversity. Try using more varied language to improve readability and SEO.");
+            }
+            
+            // Check if there are any keywords with good density
+            const optimalKeywords = results.keywords.filter(k => parseFloat(k.density) > 0.8 && parseFloat(k.density) < 2.5);
+            if (optimalKeywords.length > 0) {
+                recs.push(`These keywords have good density and are well-optimized: ${optimalKeywords.slice(0, 3).map(k => k.word).join(', ')}.`);
+            }
+            
+            if (recs.length === 0) {
+                return "Your content appears to have a good balance of keywords. Continue to focus on natural, high-quality content.";
+            }
+            
+            return recs.join(" ");
+        }
+
+        // Toggle menu functionality
+        const toggleMenu = document.getElementById('toggleMenu');
+        const toggleClose = document.getElementById('toggleClose');
+        const collapseMenu = document.getElementById('collapseMenu');
+
+        if (toggleMenu) {
+            toggleMenu.addEventListener('click', function() {
+                if (collapseMenu.classList.contains('max-lg:hidden')) {
+                    collapseMenu.classList.remove('max-lg:hidden');
+                } else {
+                    collapseMenu.classList.add('max-lg:hidden');
+                }
+            });
+        }
+
+        if (toggleClose) {
+            toggleClose.addEventListener('click', function() {
+                collapseMenu.classList.add('max-lg:hidden');
+            });
+        }
+    </script>
+</body>
+</html> 

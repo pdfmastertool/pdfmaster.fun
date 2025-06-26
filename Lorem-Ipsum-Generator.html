@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lorem Ipsum Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-blue-600 text-white p-4">
+            <div class="container mx-auto">
+                <h1 class="text-2xl md:text-3xl font-bold">Lorem Ipsum Generator</h1>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto p-4 md:p-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Generator Controls -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4">Generate Lorem Ipsum</h2>
+                        <form id="generatorForm" class="space-y-4">
+                            <div>
+                                <label class="block text-gray-700 mb-2">Generate Type</label>
+                                <select id="type" class="w-full p-2 border rounded-md">
+                                    <option value="paragraphs">Paragraphs</option>
+                                    <option value="sentences">Sentences</option>
+                                    <option value="words">Words</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-gray-700 mb-2">Number (1-50)</label>
+                                <input type="number" id="number" min="1" max="50" value="5" 
+                                    class="w-full p-2 border rounded-md">
+                            </div>
+
+                            <button type="submit" 
+                                class="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700 transition">
+                                Generate
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Output -->
+                    <div>
+                        <h2 class="text-xl font-semibold mb-4">Generated Text</h2>
+                        <div id="output" 
+                            class="p-4 bg-gray-50 rounded-md min-h-[200px] border text-gray-800">
+                            Click "Generate" to create Lorem Ipsum text
+                        </div>
+                        <button id="copyBtn" 
+                            class="mt-4 w-full bg-gray-600 text-white p-2 rounded-md hover:bg-gray-700 transition hidden">
+                            Copy to Clipboard
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 text-white p-4">
+            <div class="container mx-auto text-center">
+                <p>&copy; 2025 Lorem Ipsum Generator</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Lorem Ipsum base words
+        const loremWords = [
+            "lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit",
+            "sed", "do", "eiusmod", "tempor", "incididunt", "ut", "labore", "et", "dolore",
+            "magna", "aliqua", "enim", "ad", "minim", "veniam", "quis", "nostrud", 
+            "exercitation", "ullamco", "laboris", "nisi", "aliquip", "ex", "ea", "commodo",
+            "consequat", "duis", "aute", "irure", "reprehenderit", "in", "voluptate",
+            "velit", "esse", "cillum", "fugiat", "nulla", "pariatur"
+        ];
+
+        // Generate random text
+        function generateLorem(type, number) {
+            let result = '';
+            
+            if (type === 'words') {
+                for (let i = 0; i < number; i++) {
+                    result += loremWords[Math.floor(Math.random() * loremWords.length)] + ' ';
+                }
+            } else if (type === 'sentences') {
+                for (let i = 0; i < number; i++) {
+                    let sentence = '';
+                    let wordCount = Math.floor(Math.random() * 10) + 5; // 5-15 words
+                    for (let j = 0; j < wordCount; j++) {
+                        sentence += loremWords[Math.floor(Math.random() * loremWords.length)] + ' ';
+                    }
+                    result += sentence.trim().charAt(0).toUpperCase() + sentence.trim().slice(1) + '. ';
+                }
+            } else { // paragraphs
+                for (let i = 0; i < number; i++) {
+                    let paragraph = '';
+                    let sentenceCount = Math.floor(Math.random() * 4) + 3; // 3-6 sentences
+                    for (let j = 0; j < sentenceCount; j++) {
+                        let sentence = '';
+                        let wordCount = Math.floor(Math.random() * 10) + 5;
+                        for (let k = 0; k < wordCount; k++) {
+                            sentence += loremWords[Math.floor(Math.random() * loremWords.length)] + ' ';
+                        }
+                        paragraph += sentence.trim().charAt(0).toUpperCase() + sentence.trim().slice(1) + '. ';
+                    }
+                    result += paragraph.trim() + '\n\n';
+                }
+            }
+            return result.trim();
+        }
+
+        // Form submission handler
+        document.getElementById('generatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('type').value;
+            let number = parseInt(document.getElementById('number').value);
+            
+            // Limit number between 1 and 50
+            number = Math.max(1, Math.min(50, number));
+            
+            const output = document.getElementById('output');
+            const copyBtn = document.getElementById('copyBtn');
+            
+            const generatedText = generateLorem(type, number);
+            output.textContent = generatedText;
+            copyBtn.classList.remove('hidden');
+        });
+
+        // Copy to clipboard
+        document.getElementById('copyBtn').addEventListener('click', function() {
+            const text = document.getElementById('output').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                this.textContent = 'Copied!';
+                setTimeout(() => {
+                    this.textContent = 'Copy to Clipboard';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./src/output.css">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4 text-center">PDF to JPG Converter</h2>
+        <input type="file" id="pdfInput" accept="application/pdf" class="w-full mb-4 p-2 border rounded">
+        <div id="previewContainer" class="hidden mt-4">
+            <canvas id="pdfCanvas" class="border rounded w-full"></canvas>
+        </div>
+        <button id="convertBtn" class="w-full bg-blue-500 text-white py-2 mt-4 rounded hover:bg-blue-600">Convert to JPG</button>
+        <a id="downloadLink" class="w-full mt-4 block text-center bg-green-500 text-white py-2 rounded hidden">Download JPG</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script>
+        document.getElementById('pdfInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const pdfData = new Uint8Array(e.target.result);
+                    pdfjsLib.getDocument({ data: pdfData }).promise.then(pdf => {
+                        pdf.getPage(1).then(page => {
+                            const scale = 1.5;
+                            const viewport = page.getViewport({ scale });
+                            const canvas = document.getElementById('pdfCanvas');
+                            const context = canvas.getContext('2d');
+                            canvas.width = viewport.width;
+                            canvas.height = viewport.height;
+                            const renderContext = {
+                                canvasContext: context,
+                                viewport: viewport
+                            };
+                            page.render(renderContext).promise.then(() => {
+                                document.getElementById('previewContainer').classList.remove('hidden');
+                            });
+                        });
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const canvas = document.getElementById('pdfCanvas');
+            const downloadLink = document.getElementById('downloadLink');
+            if (canvas.width > 0) {
+                const image = canvas.toDataURL('image/jpeg');
+                downloadLink.href = image;
+                downloadLink.download = 'converted.jpg';
+                downloadLink.classList.remove('hidden');
+            } else {
+                alert('Please upload a PDF first.');
+            }
+        });
+    </script>
+</body>
+
+</html>

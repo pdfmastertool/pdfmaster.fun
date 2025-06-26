@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./src/output.css">
+    <title>Document</title>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4 text-center">PDF to JSON Converter</h2>
+        <input type="file" id="pdfInput" accept="application/pdf" class="w-full mb-4 p-2 border rounded">
+        <textarea id="jsonOutput" class="w-full p-2 border rounded h-40 hidden" readonly></textarea>
+        <button id="convertBtn" class="w-full bg-blue-500 text-white py-2 mt-4 rounded hover:bg-blue-600">Convert to JSON</button>
+        <a id="downloadLink" class="w-full mt-4 block text-center bg-green-500 text-white py-2 rounded hidden">Download JSON</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.14.305/pdf.min.js"></script>
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const fileInput = document.getElementById('pdfInput');
+            if (!fileInput.files.length) {
+                alert('Please upload a PDF first.');
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const pdfData = new Uint8Array(e.target.result);
+                pdfjsLib.getDocument({ data: pdfData }).promise.then(pdf => {
+                    let jsonData = [];
+                    let promises = [];
+                    for (let i = 1; i <= pdf.numPages; i++) {
+                        promises.push(
+                            pdf.getPage(i).then(page => {
+                                return page.getTextContent().then(textContent => {
+                                    let text = textContent.items.map(item => item.str).join(' ');
+                                    jsonData.push({ page: i, text: text });
+                                });
+                            })
+                        );
+                    }
+                    Promise.all(promises).then(() => {
+                        const jsonOutput = document.getElementById('jsonOutput');
+                        jsonOutput.value = JSON.stringify(jsonData, null, 2);
+                        jsonOutput.classList.remove('hidden');
+                        const blob = new Blob([jsonOutput.value], { type: 'application/json' });
+                        const url = URL.createObjectURL(blob);
+                        const downloadLink = document.getElementById('downloadLink');
+                        downloadLink.href = url;
+                        downloadLink.download = 'converted.json';
+                        downloadLink.classList.remove('hidden');
+                    });
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>

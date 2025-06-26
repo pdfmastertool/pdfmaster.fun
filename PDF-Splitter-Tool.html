@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Splitter Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">PDF Splitter Tool</h1>
+        
+        <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <!-- File Upload Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">1. Upload PDF File</h2>
+                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <input type="file" id="pdfFile" accept=".pdf" class="hidden">
+                    <label for="pdfFile" class="cursor-pointer">
+                        <div class="flex flex-col items-center justify-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-blue-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            <p class="text-gray-600 mb-1">Click to upload a PDF file</p>
+                            <p class="text-sm text-gray-500">or drag and drop</p>
+                        </div>
+                    </label>
+                    <p id="fileName" class="mt-2 text-sm text-gray-500 hidden"></p>
+                </div>
+            </div>
+            
+            <!-- Page Selection Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">2. Select Pages</h2>
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label for="pageSelection" class="block text-sm font-medium text-gray-700 mb-1">Selection Method</label>
+                        <select id="pageSelection" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="single">Single Pages</option>
+                            <option value="range">Page Range</option>
+                            <option value="custom">Custom Selection</option>
+                        </select>
+                    </div>
+                    <div class="flex-1" id="totalPagesContainer" style="display: none;">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Total Pages</label>
+                        <p id="totalPages" class="text-gray-600">0</p>
+                    </div>
+                </div>
+                
+                <!-- Single Page Selection -->
+                <div id="singlePageSection" class="mb-4">
+                    <label for="pageNumber" class="block text-sm font-medium text-gray-700 mb-1">Page Number</label>
+                    <input type="number" id="pageNumber" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <!-- Page Range Selection -->
+                <div id="rangeSection" class="mb-4" style="display: none;">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="startPage" class="block text-sm font-medium text-gray-700 mb-1">Start Page</label>
+                            <input type="number" id="startPage" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                        <div>
+                            <label for="endPage" class="block text-sm font-medium text-gray-700 mb-1">End Page</label>
+                            <input type="number" id="endPage" min="1" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Selection -->
+                <div id="customSection" class="mb-4" style="display: none;">
+                    <label for="customPages" class="block text-sm font-medium text-gray-700 mb-1">Page Numbers (e.g., 1,3,5-8)</label>
+                    <input type="text" id="customPages" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Example: 1,3,5-8">
+                </div>
+                
+                <div id="selectedPagesPreview" class="bg-gray-50 p-3 rounded-md hidden">
+                    <p class="text-sm font-medium text-gray-700">Selected Pages:</p>
+                    <p id="selectedPagesList" class="text-sm text-gray-600 mt-1"></p>
+                </div>
+            </div>
+            
+            <!-- Download Options -->
+            <div class="mb-8">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">3. Download Options</h2>
+                <div class="flex flex-col md:flex-row gap-4 mb-4">
+                    <div class="flex-1">
+                        <label for="outputFormat" class="block text-sm font-medium text-gray-700 mb-1">Output Format</label>
+                        <select id="outputFormat" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            <option value="pdf">PDF</option>
+                            <option value="separate">Separate PDFs (one per page)</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label for="fileNamePrefix" class="block text-sm font-medium text-gray-700 mb-1">File Name Prefix</label>
+                        <input type="text" id="fileNamePrefix" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="extracted_pages">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="flex justify-center gap-4">
+                <button id="resetBtn" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Reset
+                </button>
+                <button id="splitBtn" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50" disabled>
+                    Split PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const pdfFileInput = document.getElementById('pdfFile');
+    const fileNameDisplay = document.getElementById('fileName');
+    const pageSelection = document.getElementById('pageSelection');
+    const singlePageSection = document.getElementById('singlePageSection');
+    const rangeSection = document.getElementById('rangeSection');
+    const customSection = document.getElementById('customSection');
+    const pageNumberInput = document.getElementById('pageNumber');
+    const startPageInput = document.getElementById('startPage');
+    const endPageInput = document.getElementById('endPage');
+    const customPagesInput = document.getElementById('customPages');
+    const selectedPagesPreview = document.getElementById('selectedPagesPreview');
+    const selectedPagesList = document.getElementById('selectedPagesList');
+    const totalPagesContainer = document.getElementById('totalPagesContainer');
+    const totalPagesDisplay = document.getElementById('totalPages');
+    const outputFormat = document.getElementById('outputFormat');
+    const fileNamePrefix = document.getElementById('fileNamePrefix');
+    const resetBtn = document.getElementById('resetBtn');
+    const splitBtn = document.getElementById('splitBtn');
+    
+    let pdfDoc = null;
+    let totalPages = 0;
+    
+    // Initialize PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+    
+    // Event Listeners
+    pdfFileInput.addEventListener('change', handleFileUpload);
+    pageSelection.addEventListener('change', handleSelectionChange);
+    pageNumberInput.addEventListener('input', updateSelectedPagesPreview);
+    startPageInput.addEventListener('input', updateSelectedPagesPreview);
+    endPageInput.addEventListener('input', updateSelectedPagesPreview);
+    customPagesInput.addEventListener('input', updateSelectedPagesPreview);
+    resetBtn.addEventListener('click', resetForm);
+    splitBtn.addEventListener('click', splitPdf);
+    
+    // Functions
+    function handleFileUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        fileNameDisplay.textContent = file.name;
+        fileNameDisplay.classList.remove('hidden');
+        
+        const fileReader = new FileReader();
+        fileReader.onload = async function() {
+            try {
+                const typedArray = new Uint8Array(this.result);
+                pdfDoc = await pdfjsLib.getDocument(typedArray).promise;
+                totalPages = pdfDoc.numPages;
+                totalPagesDisplay.textContent = totalPages;
+                totalPagesContainer.style.display = 'block';
+                
+                // Set max values for inputs
+                pageNumberInput.max = totalPages;
+                startPageInput.max = totalPages;
+                endPageInput.max = totalPages;
+                
+                // Enable split button
+                splitBtn.disabled = false;
+                
+                // Update preview
+                updateSelectedPagesPreview();
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                alert('Error loading PDF. Please make sure the file is valid.');
+                resetForm();
+            }
+        };
+        fileReader.readAsArrayBuffer(file);
+    }
+    
+    function handleSelectionChange() {
+        const selectionMethod = pageSelection.value;
+        
+        // Hide all sections first
+        singlePageSection.style.display = 'none';
+        rangeSection.style.display = 'none';
+        customSection.style.display = 'none';
+        
+        // Show the selected section
+        switch(selectionMethod) {
+            case 'single':
+                singlePageSection.style.display = 'block';
+                break;
+            case 'range':
+                rangeSection.style.display = 'block';
+                break;
+            case 'custom':
+                customSection.style.display = 'block';
+                break;
+        }
+        
+        updateSelectedPagesPreview();
+    }
+    
+    function updateSelectedPagesPreview() {
+        if (!pdfDoc) {
+            selectedPagesPreview.classList.add('hidden');
+            return;
+        }
+        
+        let pages = [];
+        const selectionMethod = pageSelection.value;
+        
+        try {
+            switch(selectionMethod) {
+                case 'single':
+                    const singlePage = parseInt(pageNumberInput.value);
+                    if (!isNaN(singlePage) {
+                        pages = validatePages([singlePage]);
+                    }
+                    break;
+                case 'range':
+                    const startPage = parseInt(startPageInput.value);
+                    const endPage = parseInt(endPageInput.value);
+                    if (!isNaN(startPage) {
+                        const rangeEnd = !isNaN(endPage) ? endPage : startPage;
+                        pages = validateRange(startPage, rangeEnd);
+                    }
+                    break;
+                case 'custom':
+                    const customInput = customPagesInput.value.trim();
+                    if (customInput) {
+                        pages = parseCustomPages(customInput);
+                    }
+                    break;
+            }
+        } catch (error) {
+            console.error('Error parsing pages:', error);
+            selectedPagesList.textContent = 'Invalid page selection';
+            selectedPagesPreview.classList.remove('hidden');
+            return;
+        }
+        
+        if (pages.length > 0) {
+            selectedPagesList.textContent = pages.join(', ');
+            selectedPagesPreview.classList.remove('hidden');
+        } else {
+            selectedPagesPreview.classList.add('hidden');
+        }
+    }
+    
+    function validatePages(pages) {
+        return pages.filter(page => page >= 1 && page <= totalPages);
+    }
+    
+    function validateRange(start, end) {
+        const actualStart = Math.min(start, end);
+        const actualEnd = Math.max(start, end);
+        const pages = [];
+        
+        for (let i = actualStart; i <= actualEnd; i++) {
+            if (i >= 1 && i <= totalPages) {
+                pages.push(i);
+            }
+        }
+        
+        return pages;
+    }
+    
+    function parseCustomPages(input) {
+        const parts = input.split(',');
+        const pages = new Set();
+        
+        for (const part of parts) {
+            const trimmed = part.trim();
+            if (trimmed.includes('-')) {
+                // Handle range (e.g., "3-5")
+                const [startStr, endStr] = trimmed.split('-');
+                const start = parseInt(startStr);
+                const end = parseInt(endStr);
+                
+                if (isNaN(start) || isNaN(end)) {
+                    throw new Error(`Invalid range: ${trimmed}`);
+                }
+                
+                const rangePages = validateRange(start, end);
+                rangePages.forEach(p => pages.add(p));
+            } else {
+                // Handle single page
+                const page = parseInt(trimmed);
+                if (!isNaN(page) && page >= 1 && page <= totalPages) {
+                    pages.add(page);
+                }
+            }
+        }
+        
+        return Array.from(pages).sort((a, b) => a - b);
+    }
+    
+    async function splitPdf() {
+        if (!pdfDoc) return;
+        
+        let pages = [];
+        const selectionMethod = pageSelection.value;
+        
+        try {
+            switch(selectionMethod) {
+                case 'single':
+                    const singlePage = parseInt(pageNumberInput.value);
+                    if (!isNaN(singlePage)) {
+                        pages = validatePages([singlePage]);
+                    }
+                    break;
+                case 'range':
+                    const startPage = parseInt(startPageInput.value);
+                    const endPage = parseInt(endPageInput.value);
+                    if (!isNaN(startPage)) {
+                        const rangeEnd = !isNaN(endPage) ? endPage : startPage;
+                        pages = validateRange(startPage, rangeEnd);
+                    }
+                    break;
+                case 'custom':
+                    const customInput = customPagesInput.value.trim();
+                    if (customInput) {
+                        pages = parseCustomPages(customInput);
+                    }
+                    break;
+            }
+        } catch (error) {
+            alert('Invalid page selection: ' + error.message);
+            return;
+        }
+        
+        if (pages.length === 0) {
+            alert('Please select at least one valid page');
+            return;
+        }
+        
+        splitBtn.disabled = true;
+        splitBtn.textContent = 'Processing...';
+        
+        try {
+            // Load the original PDF with pdf-lib
+            const file = pdfFileInput.files[0];
+            const fileReader = new FileReader();
+            
+            fileReader.onload = async function() {
+                try {
+                    const originalPdfBytes = new Uint8Array(this.result);
+                    const pdfDoc = await PDFLib.PDFDocument.load(originalPdfBytes);
+                    
+                    if (outputFormat.value === 'pdf') {
+                        // Create a new PDF with selected pages
+                        const newPdf = await PDFLib.PDFDocument.create();
+                        
+                        for (const pageNum of pages) {
+                            const [copiedPage] = await newPdf.copyPages(pdfDoc, [pageNum - 1]);
+                            newPdf.addPage(copiedPage);
+                        }
+                        
+                        const newPdfBytes = await newPdf.save();
+                        downloadPdf(newPdfBytes, fileNamePrefix.value || 'extracted_pages');
+                    } else {
+                        // Create separate PDFs for each page
+                        for (const pageNum of pages) {
+                            const singlePagePdf = await PDFLib.PDFDocument.create();
+                            const [copiedPage] = await singlePagePdf.copyPages(pdfDoc, [pageNum - 1]);
+                            singlePagePdf.addPage(copiedPage);
+                            
+                            const singlePageBytes = await singlePagePdf.save();
+                            downloadPdf(singlePageBytes, `${fileNamePrefix.value || 'page'}_${pageNum}`, pageNum);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error processing PDF:', error);
+                    alert('Error processing PDF. Please try again.');
+                } finally {
+                    splitBtn.disabled = false;
+                    splitBtn.textContent = 'Split PDF';
+                }
+            };
+            
+            fileReader.readAsArrayBuffer(file);
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while splitting the PDF.');
+            splitBtn.disabled = false;
+            splitBtn.textContent = 'Split PDF';
+        }
+    }
+    
+    function downloadPdf(pdfBytes, fileName, pageNum = null) {
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = pageNum ? `${fileName}.pdf` : `${fileName}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+    
+    function resetForm() {
+        pdfFileInput.value = '';
+        fileNameDisplay.textContent = '';
+        fileNameDisplay.classList.add('hidden');
+        pageSelection.value = 'single';
+        pageNumberInput.value = '';
+        startPageInput.value = '';
+        endPageInput.value = '';
+        customPagesInput.value = '';
+        selectedPagesPreview.classList.add('hidden');
+        totalPagesContainer.style.display = 'none';
+        outputFormat.value = 'pdf';
+        fileNamePrefix.value = '';
+        splitBtn.disabled = true;
+        pdfDoc = null;
+        totalPages = 0;
+        
+        handleSelectionChange();
+    }
+});
+    </script>
+</body>
+</html>

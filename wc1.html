@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Counter | Analyze Your Text</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        dark: '#1e293b',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        textarea {
+            resize: none;
+        }
+        
+        .counter-card {
+            transition: all 0.3s ease;
+        }
+        
+        .counter-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-4xl">
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-dark mb-3">Word Counter</h1>
+            <p class="text-gray-600 max-w-lg mx-auto">Paste or type your text below to get real-time statistics about your content</p>
+        </header>
+        
+        <!-- Text Input -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+            <div class="p-1 bg-gradient-to-r from-primary to-purple-500"></div>
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-semibold text-dark">Your Text</h2>
+                    <button id="clearBtn" class="text-primary hover:text-purple-700 transition">
+                        <i class="fas fa-trash-alt mr-1"></i> Clear All
+                    </button>
+                </div>
+                <textarea id="textInput" class="w-full h-64 p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="Start typing or paste your text here..."></textarea>
+            </div>
+        </div>
+        
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Words Card -->
+            <div class="counter-card bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg">
+                <div class="text-primary text-4xl mb-3">
+                    <i class="fas fa-font"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-1">Words</h3>
+                <div id="wordCount" class="text-3xl font-bold text-dark">0</div>
+            </div>
+            
+            <!-- Characters Card -->
+            <div class="counter-card bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg">
+                <div class="text-primary text-4xl mb-3">
+                    <i class="fas fa-keyboard"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-1">Characters</h3>
+                <div id="charCount" class="text-3xl font-bold text-dark">0</div>
+            </div>
+            
+            <!-- Sentences Card -->
+            <div class="counter-card bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg">
+                <div class="text-primary text-4xl mb-3">
+                    <i class="fas fa-terminal"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-1">Sentences</h3>
+                <div id="sentenceCount" class="text-3xl font-bold text-dark">0</div>
+            </div>
+            
+            <!-- Paragraphs Card -->
+            <div class="counter-card bg-white rounded-xl shadow-md p-6 text-center hover:shadow-lg">
+                <div class="text-primary text-4xl mb-3">
+                    <i class="fas fa-align-left"></i>
+                </div>
+                <h3 class="text-lg font-medium text-gray-700 mb-1">Paragraphs</h3>
+                <div id="paragraphCount" class="text-3xl font-bold text-dark">0</div>
+            </div>
+        </div>
+        
+        <!-- Additional Features -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-1 bg-gradient-to-r from-primary to-purple-500"></div>
+            <div class="p-6">
+                <h2 class="text-xl font-semibold text-dark mb-4">Text Analysis</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Reading Time -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-clock text-primary mr-2"></i> Reading Time
+                        </h3>
+                        <div id="readingTime" class="text-2xl font-bold text-dark">0 min</div>
+                        <p class="text-sm text-gray-500 mt-1">Based on 200 words per minute</p>
+                    </div>
+                    
+                    <!-- Character Density -->
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-700 mb-2 flex items-center">
+                            <i class="fas fa-chart-bar text-primary mr-2"></i> Character Density
+                        </h3>
+                        <div id="charDensity" class="text-2xl font-bold text-dark">0%</div>
+                        <p class="text-sm text-gray-500 mt-1">Non-space characters vs total</p>
+                    </div>
+                </div>
+                
+                <!-- Word Frequency -->
+                <div class="mt-6">
+                    <h3 class="font-medium text-gray-700 mb-3 flex items-center">
+                        <i class="fas fa-list-ol text-primary mr-2"></i> Most Frequent Words
+                    </h3>
+                    <div id="wordFrequency" class="bg-gray-50 p-4 rounded-lg min-h-20">
+                        <p class="text-gray-500 italic">Type more to see frequent words</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="mt-12 text-center text-gray-500 text-sm">
+            <p>Made with <i class="fas fa-heart text-red-500"></i> - Word Counter Tool</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const textInput = document.getElementById('textInput');
+            const clearBtn = document.getElementById('clearBtn');
+            
+            // Count elements
+            const wordCountEl = document.getElementById('wordCount');
+            const charCountEl = document.getElementById('charCount');
+            const sentenceCountEl = document.getElementById('sentenceCount');
+            const paragraphCountEl = document.getElementById('paragraphCount');
+            const readingTimeEl = document.getElementById('readingTime');
+            const charDensityEl = document.getElementById('charDensity');
+            const wordFrequencyEl = document.getElementById('wordFrequency');
+            
+            // Event listeners
+            textInput.addEventListener('input', updateCounts);
+            clearBtn.addEventListener('click', clearAll);
+            
+            // Initial update
+            updateCounts();
+            
+            function updateCounts() {
+                const text = textInput.value;
+                
+                // Word count (counts words separated by whitespace)
+                const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+                wordCountEl.textContent = wordCount.toLocaleString();
+                
+                // Character count (including spaces)
+                const charCount = text.length;
+                charCountEl.textContent = charCount.toLocaleString();
+                
+                // Sentence count (counts sentences ending with .!? followed by space or end)
+                const sentenceCount = text.trim() === '' ? 0 : text.split(/[.!?]+(?=\s|$)/).length - 1;
+                sentenceCountEl.textContent = sentenceCount.toLocaleString();
+                
+                // Paragraph count (counts non-empty paragraphs separated by newlines)
+                const paragraphCount = text.trim() === '' ? 0 : text.replace(/\n$/gm, '').split(/\n/).length;
+                paragraphCountEl.textContent = paragraphCount.toLocaleString();
+                
+                // Reading time (200 words per minute)
+                const readingTime = Math.ceil(wordCount / 200);
+                readingTimeEl.textContent = `${readingTime} min`;
+                
+                // Character density (non-space characters vs total)
+                const nonSpaceChars = text.replace(/\s/g, '').length;
+                const density = charCount > 0 ? Math.round((nonSpaceChars / charCount) * 100) : 0;
+                charDensityEl.textContent = `${density}%`;
+                
+                // Word frequency analysis (top 5 words)
+                updateWordFrequency(text);
+            }
+            
+            function updateWordFrequency(text) {
+                if (text.trim() === '') {
+                    wordFrequencyEl.innerHTML = '<p class="text-gray-500 italic">Type more to see frequent words</p>';
+                    return;
+                }
+                
+                // Clean text and split into words
+                const words = text.toLowerCase()
+                    .replace(/[^\w\s]|_/g, '') // Remove punctuation
+                    .replace(/\s+/g, ' ')       // Normalize whitespace
+                    .split(' ');
+                
+                // Count word frequencies
+                const frequency = {};
+                words.forEach(word => {
+                    if (word.length > 0) { // Skip empty strings
+                        frequency[word] = (frequency[word] || 0) + 1;
+                    }
+                });
+                
+                // Convert to array and sort by frequency
+                const sorted = Object.entries(frequency)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 5); // Get top 5
+                
+                // Display results
+                if (sorted.length === 0) {
+                    wordFrequencyEl.innerHTML = '<p class="text-gray-500 italic">No words to analyze</p>';
+                } else {
+                    let html = '<div class="space-y-2">';
+                    sorted.forEach(([word, count]) => {
+                        const width = Math.min(100, (count / sorted[0][1]) * 100);
+                        html += `
+                            <div>
+                                <div class="flex justify-between text-sm mb-1">
+                                    <span>${word}</span>
+                                    <span>${count}</span>
+                                </div>
+                                <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-primary rounded-full" style="width: ${width}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    wordFrequencyEl.innerHTML = html;
+                }
+            }
+            
+            function clearAll() {
+                textInput.value = '';
+                updateCounts();
+                textInput.focus();
+            }
+        });
+    </script>
+</body>
+</html>

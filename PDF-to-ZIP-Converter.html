@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4 text-center">PDF to ZIP Converter</h2>
+        <input type="file" id="pdfInput" accept="application/pdf" class="w-full mb-4 p-2 border rounded" multiple>
+        <input type="text" id="zipFileName" placeholder="Enter ZIP file name" class="w-full mb-4 p-2 border rounded">
+        <button id="convertBtn" class="w-full bg-blue-500 text-white py-2 mt-4 rounded hover:bg-blue-600">Convert to ZIP</button>
+        <a id="downloadLink" class="w-full mt-4 block text-center bg-green-500 text-white py-2 rounded hidden">Download ZIP</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function() {
+            const files = document.getElementById('pdfInput').files;
+            const zipFileName = document.getElementById('zipFileName').value.trim() || 'converted';
+            if (files.length === 0) {
+                alert('Please upload at least one PDF file.');
+                return;
+            }
+            const zip = new JSZip();
+            Array.from(files).forEach(file => {
+                zip.file(file.name, file);
+            });
+            zip.generateAsync({ type: 'blob' }).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = url;
+                downloadLink.download = zipFileName + '.zip';
+                downloadLink.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+
+</html>

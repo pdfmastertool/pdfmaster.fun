@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <h2 class="text-xl font-bold mb-4 text-center">CSV to PDF Converter</h2>
+        <input type="file" id="csvInput" accept=".csv" class="w-full mb-4 p-2 border rounded">
+        <button id="convertBtn" class="w-full bg-blue-500 text-white py-2 mt-4 rounded hover:bg-blue-600">Convert to PDF</button>
+        <a id="downloadLink" class="w-full mt-4 block text-center bg-green-500 text-white py-2 rounded hidden">Download PDF</a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script>
+        document.getElementById('convertBtn').addEventListener('click', function () {
+            const fileInput = document.getElementById('csvInput');
+            if (!fileInput.files.length) {
+                alert('Please upload a CSV file.');
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const csv = e.target.result;
+                const rows = csv.split('\n').map(row => row.split(','));
+                
+                // Determine column widths based on CSV content
+                const columnWidths = Array(rows[0].length).fill('*');
+                
+                const docDefinition = {
+                    pageSize: 'A4',
+                    content: [
+                        { text: 'CSV Data', style: 'header' },
+                        {
+                            table: {
+                                headerRows: 1,
+                                widths: columnWidths,
+                                body: rows
+                            },
+                            layout: 'lightHorizontalLines'
+                        }
+                    ],
+                    styles: {
+                        header: { fontSize: 18, bold: true, marginBottom: 10 }
+                    }
+                };
+                pdfMake.createPdf(docDefinition).download('converted.pdf');
+            };
+            reader.readAsText(file);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Merger Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">PDF Merger Tool</h1>
+        <div id="pdf-upload-section">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="pdf1">Upload PDF 1</label>
+                <input type="file" id="pdf1" accept="application/pdf" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="pdf2">Upload PDF 2</label>
+                <input type="file" id="pdf2" accept="application/pdf" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            </div>
+            <button id="add-more" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Add More PDFs</button>
+        </div>
+        <div id="additional-pdfs" class="hidden">
+            <!-- Additional PDF inputs will be added here -->
+        </div>
+        <button id="merge-pdfs" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Merge PDFs</button>
+        <a id="download-link" class="hidden mt-4 inline-block bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" download="merged.pdf">Download Merged PDF</a>
+    </div>
+
+    <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+    <script>
+       document.addEventListener('DOMContentLoaded', () => {
+    const pdf1Input = document.getElementById('pdf1');
+    const pdf2Input = document.getElementById('pdf2');
+    const addMoreButton = document.getElementById('add-more');
+    const additionalPdfsDiv = document.getElementById('additional-pdfs');
+    const mergePdfsButton = document.getElementById('merge-pdfs');
+    const downloadLink = document.getElementById('download-link');
+
+    let pdfFiles = [];
+
+    addMoreButton.addEventListener('click', () => {
+        additionalPdfsDiv.classList.remove('hidden');
+        const newInput = document.createElement('div');
+        newInput.classList.add('mb-4');
+        newInput.innerHTML = `
+            <label class="block text-gray-700 text-sm font-bold mb-2" for="pdf${pdfFiles.length + 3}">Upload PDF ${pdfFiles.length + 3}</label>
+            <input type="file" id="pdf${pdfFiles.length + 3}" accept="application/pdf" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        `;
+        additionalPdfsDiv.appendChild(newInput);
+    });
+
+    mergePdfsButton.addEventListener('click', async () => {
+        pdfFiles = [];
+        pdfFiles.push(pdf1Input.files[0]);
+        pdfFiles.push(pdf2Input.files[0]);
+
+        const additionalInputs = additionalPdfsDiv.querySelectorAll('input[type="file"]');
+        additionalInputs.forEach(input => {
+            if (input.files[0]) {
+                pdfFiles.push(input.files[0]);
+            }
+        });
+
+        if (pdfFiles.length < 2) {
+            alert('Please upload at least two PDFs to merge.');
+            return;
+        }
+
+        const mergedPdf = await mergePDFs(pdfFiles);
+        const blob = new Blob([mergedPdf], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        downloadLink.href = url;
+        downloadLink.classList.remove('hidden');
+    });
+
+    async function mergePDFs(pdfFiles) {
+        const { PDFDocument } = PDFLib;
+
+        const mergedPdf = await PDFDocument.create();
+
+        for (const file of pdfFiles) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdfDoc = await PDFDocument.load(arrayBuffer);
+            const copiedPages = await mergedPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+            copiedPages.forEach(page => mergedPdf.addPage(page));
+        }
+
+        const pdfBytes = await mergedPdf.save();
+        return new Uint8Array(pdfBytes);
+    }
+});
+    </script>
+</body>
+</html>

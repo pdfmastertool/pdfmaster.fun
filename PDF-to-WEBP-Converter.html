@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to WebP Converter</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold text-center mb-6">PDF to WebP Converter</h1>
+        <div class="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
+            <input type="file" id="pdf-input" class="mb-4" accept="application/pdf">
+            <button id="convert-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 w-full">Convert to WebP</button>
+            <p id="error-message" class="text-red-500 mt-2"></p>
+        </div>
+        <div id="page-selection" class="mt-6 hidden">
+            <label for="page-number" class="block text-sm font-medium text-gray-700">Select Page Number</label>
+            <select id="page-number" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                <!-- Page options will be dynamically added here -->
+            </select>
+            <button id="download-selected-page" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 w-full">Download Selected Page</button>
+            <button id="download-all-pages" class="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 w-full">Download All Pages</button>
+        </div>
+        <div id="image-container" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    </div>
+
+    <!-- Include PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.8.335/pdf.min.js"></script>
+    <script>
+        // JavaScript for PDF to WebP Conversion
+        const pdfInput = document.getElementById("pdf-input");
+        const convertBtn = document.getElementById("convert-btn");
+        const errorMessage = document.getElementById("error-message");
+        const imageContainer = document.getElementById("image-container");
+        const pageSelection = document.getElementById("page-selection");
+        const pageNumberSelect = document.getElementById("page-number");
+        const downloadSelectedPageBtn = document.getElementById("download-selected-page");
+        const downloadAllPagesBtn = document.getElementById("download-all-pages");
+
+        let webpImages = []; // Store WebP image data URLs
+
+        pdfInput.addEventListener("change", function () {
+            if (pdfInput.files.length > 0) {
+                convertBtn.disabled = false;
+                convertBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                convertBtn.classList.add("opacity-100", "cursor-pointer");
+            }
+        });
+
+        convertBtn.addEventListener("click", async () => {
+            const file = pdfInput.files[0];
+            if (!file) {
+                errorMessage.textContent = "Please select a PDF file.";
+                return;
+            }
+
+            errorMessage.textContent = ""; // Reset error message
+            imageContainer.innerHTML = ""; // Clear previous images
+            pageSelection.classList.add("hidden"); // Hide page selection initially
+            pageNumberSelect.innerHTML = ""; // Clear previous page options
+
+            try {
+                const pdfData = await file.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({ data: pdfData }).promise;
+
+                webpImages = []; // Reset WebP images array
+
+                for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                    const page = await pdf.getPage(pageNum);
+                    const viewport = page.getViewport({ scale: 1.5 });
+                    const canvas = document.createElement("canvas");
+                    const context = canvas.getContext("2d");
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
+
+                    await page.render({
+                        canvasContext: context,
+                        viewport: viewport,
+                    }).promise;
+
+                    // Convert canvas image to WebP
+                    const webpDataUrl = await convertCanvasToWebP(canvas);
+                    webpImages.push(webpDataUrl); // Store WebP image data URL
+
+                    // Display the WebP image
+                    const img = document.createElement("img");
+                    img.src = webpDataUrl;
+                    img.alt = `Page ${pageNum}`;
+                    img.classList.add("w-full", "h-auto", "rounded-lg", "shadow-md");
+                    imageContainer.appendChild(img);
+
+                    // Add page number to the dropdown
+                    const option = document.createElement("option");
+                    option.value = pageNum - 1; // Zero-based index
+                    option.textContent = `Page ${pageNum}`;
+                    pageNumberSelect.appendChild(option);
+                }
+
+                // Show page selection after conversion
+                pageSelection.classList.remove("hidden");
+            } catch (error) {
+                errorMessage.textContent = "Conversion failed. Please try again later.";
+                console.error("Error during conversion:", error);
+            }
+        });
+
+        /**
+         * Converts a canvas image to WebP format.
+         */
+        async function convertCanvasToWebP(canvas) {
+            return new Promise((resolve, reject) => {
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) {
+                            reject(new Error("Failed to convert canvas to WebP."));
+                            return;
+                        }
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = () => reject(reader.error);
+                        reader.readAsDataURL(blob);
+                    },
+                    "image/webp",
+                    0.9 // Quality (0.0 to 1.0)
+                );
+            });
+        }
+
+        /**
+         * Downloads the selected WebP image.
+         */
+        downloadSelectedPageBtn.addEventListener("click", () => {
+            const selectedPageIndex = pageNumberSelect.value;
+            if (selectedPageIndex >= 0 && selectedPageIndex < webpImages.length) {
+                const webpDataUrl = webpImages[selectedPageIndex];
+                const link = document.createElement("a");
+                link.href = webpDataUrl;
+                link.download = `page-${parseInt(selectedPageIndex) + 1}.webp`;
+                link.click();
+            } else {
+                errorMessage.textContent = "Please select a valid page.";
+            }
+        });
+
+        /**
+         * Downloads all WebP images as individual files.
+         */
+        downloadAllPagesBtn.addEventListener("click", () => {
+            if (webpImages.length === 0) {
+                errorMessage.textContent = "No pages to download.";
+                return;
+            }
+
+            webpImages.forEach((webpDataUrl, index) => {
+                const link = document.createElement("a");
+                link.href = webpDataUrl;
+                link.download = `page-${index + 1}.webp`;
+                link.click();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4 py-8 max-w-4xl">
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <!-- Header -->
+            <div class="bg-indigo-600 py-4 px-6">
+                <h1 class="text-2xl font-bold text-white text-center">HTML to PDF Converter</h1>
+                <p class="text-indigo-100 text-sm text-center mt-1">Convert HTML content to professional PDF documents</p>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="p-6 space-y-6">
+                <!-- Input Modes -->
+                <div class="flex border-b border-gray-200">
+                    <button id="html-tab" class="py-2 px-4 font-medium text-sm border-b-2 border-indigo-500 text-indigo-600">HTML Editor</button>
+                    <button id="url-tab" class="py-2 px-4 font-medium text-sm text-gray-500 hover:text-gray-700">Webpage URL</button>
+                </div>
+
+                <!-- HTML Editor -->
+                <div id="html-editor" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">HTML Content</label>
+                        <textarea id="html-content" rows="12" class="w-full p-3 border border-gray-300 rounded-lg font-mono text-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="<html>
+  <body>
+    <h1>Your Content Here</h1>
+    <p>Convert this HTML to PDF</p>
+  </body>
+</html>"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Live Preview</label>
+                        <div id="html-preview" class="w-full min-h-40 p-3 border border-gray-300 rounded-lg bg-white overflow-auto"></div>
+                    </div>
+                </div>
+
+                <!-- URL Input -->
+                <div id="url-input" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Webpage URL</label>
+                        <input type="url" id="webpage-url" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://example.com">
+                    </div>
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <svg class="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm text-yellow-700">
+                                    Note: Due to browser security restrictions, some webpages may not convert properly. For best results, use the HTML editor.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="space-y-4">
+                    <h3 class="font-medium text-gray-700">PDF Options</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                            <select id="page-size" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="a4">A4</option>
+                                <option value="letter">Letter</option>
+                                <option value="a5">A5</option>
+                                <option value="a3">A3</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Orientation</label>
+                            <select id="orientation" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="portrait">Portrait</option>
+                                <option value="landscape">Landscape</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Margin (mm)</label>
+                            <input type="number" id="margin" min="0" max="50" value="10" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="include-background" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded" checked>
+                            <label for="include-background" class="ml-2 block text-sm text-gray-700">Include background colors/images</label>
+                        </div>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="scale-content" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="scale-content" class="ml-2 block text-sm text-gray-700">Scale to fit page width</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Convert Button -->
+                <button id="convert-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200">
+                    <span id="btn-text">Convert to PDF</span>
+                    <span id="btn-spinner" class="hidden ml-2">
+                        <svg class="animate-spin h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        <div id="result-section" class="hidden mt-6 bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="bg-green-600 py-3 px-6">
+                <h2 class="text-xl font-bold text-white text-center">Conversion Complete!</h2>
+            </div>
+            <div class="p-6 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <p class="text-gray-700 mb-6">Your HTML has been successfully converted to PDF.</p>
+                <div class="flex justify-center space-x-4">
+                    <button id="download-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg inline-flex items-center transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Download PDF
+                    </button>
+                    <button id="new-conversion" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg inline-flex items-center transition-colors duration-200">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+                        </svg>
+                        Convert Again
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden mt-4 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 rounded-r-lg">
+            <div class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                </svg>
+                <span id="error-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+
+        // DOM elements
+        const htmlTab = document.getElementById('html-tab');
+        const urlTab = document.getElementById('url-tab');
+        const htmlEditor = document.getElementById('html-editor');
+        const urlInput = document.getElementById('url-input');
+        const htmlContent = document.getElementById('html-content');
+        const htmlPreview = document.getElementById('html-preview');
+        const webpageUrl = document.getElementById('webpage-url');
+        const convertBtn = document.getElementById('convert-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnSpinner = document.getElementById('btn-spinner');
+        const resultSection = document.getElementById('result-section');
+        const downloadBtn = document.getElementById('download-btn');
+        const newConversionBtn = document.getElementById('new-conversion');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        // Options
+        const pageSizeSelect = document.getElementById('page-size');
+        const orientationSelect = document.getElementById('orientation');
+        const marginInput = document.getElementById('margin');
+        const includeBackground = document.getElementById('include-background');
+        const scaleContent = document.getElementById('scale-content');
+
+        // Variables
+        let pdfBlob = null;
+
+        // Event Listeners
+        htmlTab.addEventListener('click', () => {
+            htmlTab.classList.add('border-indigo-500', 'text-indigo-600');
+            htmlTab.classList.remove('text-gray-500', 'hover:text-gray-700');
+            urlTab.classList.add('text-gray-500', 'hover:text-gray-700');
+            urlTab.classList.remove('border-indigo-500', 'text-indigo-600');
+            htmlEditor.classList.remove('hidden');
+            urlInput.classList.add('hidden');
+        });
+
+        urlTab.addEventListener('click', () => {
+            urlTab.classList.add('border-indigo-500', 'text-indigo-600');
+            urlTab.classList.remove('text-gray-500', 'hover:text-gray-700');
+            htmlTab.classList.add('text-gray-500', 'hover:text-gray-700');
+            htmlTab.classList.remove('border-indigo-500', 'text-indigo-600');
+            urlInput.classList.remove('hidden');
+            htmlEditor.classList.add('hidden');
+        });
+
+        htmlContent.addEventListener('input', updatePreview);
+        convertBtn.addEventListener('click', convertToPdf);
+        downloadBtn.addEventListener('click', downloadPdf);
+        newConversionBtn.addEventListener('click', resetConverter);
+
+        // Initialize
+        updatePreview();
+
+        function updatePreview() {
+            try {
+                htmlPreview.innerHTML = htmlContent.value;
+                errorMessage.classList.add('hidden');
+            } catch (e) {
+                showError('Invalid HTML content');
+            }
+        }
+
+        async function convertToPdf() {
+            try {
+                // Show loading state
+                btnText.textContent = 'Converting...';
+                btnSpinner.classList.remove('hidden');
+                convertBtn.disabled = true;
+                errorMessage.classList.add('hidden');
+                resultSection.classList.add('hidden');
+
+                // Get options
+                const pageSize = pageSizeSelect.value;
+                const orientation = orientationSelect.value;
+                const margin = parseInt(marginInput.value);
+                const includeBg = includeBackground.checked;
+                const scale = scaleContent.checked;
+
+                let elementToConvert;
+                
+                if (!htmlEditor.classList.contains('hidden')) {
+                    // Convert HTML content
+                    elementToConvert = htmlPreview;
+                } else {
+                    // Convert webpage URL (note: this has limitations due to CORS)
+                    const url = webpageUrl.value.trim();
+                    if (!url) {
+                        throw new Error('Please enter a valid URL');
+                    }
+                    
+                    // Create iframe for the webpage
+                    const iframe = document.createElement('iframe');
+                    iframe.src = url;
+                    iframe.style.width = '100%';
+                    iframe.style.height = '500px';
+                    iframe.style.border = 'none';
+                    document.body.appendChild(iframe);
+                    elementToConvert = iframe;
+                    
+                    // Wait for iframe to load
+                    await new Promise(resolve => {
+                        iframe.onload = resolve;
+                    });
+                    
+                    // Additional wait for content to render
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                }
+
+                // Create PDF from the element
+                const options = {
+                    scale: scale ? 0.5 : 1,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: includeBg ? '#FFFFFF' : null,
+                    logging: false
+                };
+
+                // Convert element to canvas
+                const canvas = await html2canvas(elementToConvert, options);
+                
+                // Calculate PDF dimensions
+                const imgWidth = canvas.width * 0.264583; // px to mm
+                const imgHeight = canvas.height * 0.264583;
+                
+                // Create PDF
+                const pdf = new jsPDF({
+                    orientation: imgWidth > imgHeight ? 'landscape' : orientation,
+                    unit: 'mm',
+                    format: pageSize
+                });
+
+                // Add image to PDF
+                pdf.addImage(canvas.toDataURL('image/png'), 'PNG', margin, margin, 
+                    imgWidth - (margin * 2), imgHeight - (margin * 2));
+
+                // Generate PDF blob
+                pdfBlob = pdf.output('blob');
+                
+                // Show result
+                resultSection.classList.remove('hidden');
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Clean up if we created an iframe
+                if (elementToConvert.tagName === 'IFRAME') {
+                    document.body.removeChild(elementToConvert);
+                }
+                
+            } catch (error) {
+                showError(error.message || 'An error occurred during conversion. Please try again.');
+                console.error('Conversion error:', error);
+            } finally {
+                // Reset button state
+                btnText.textContent = 'Convert to PDF';
+                btnSpinner.classList.add('hidden');
+                convertBtn.disabled = false;
+            }
+        }
+
+        function downloadPdf() {
+            if (pdfBlob) {
+                const url = URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'converted-html.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function resetConverter() {
+            pdfBlob = null;
+            resultSection.classList.add('hidden');
+            if (!htmlEditor.classList.contains('hidden')) {
+                htmlContent.focus();
+            } else {
+                webpageUrl.focus();
+            }
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            errorMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

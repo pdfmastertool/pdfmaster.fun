@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+     <!-- Length Converter -->
+     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-xl font-bold text-center mb-4">Length Converter</h2>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">Enter Value:</label>
+          <input type="number" id="inputValue" class="w-full p-2 border rounded-md" placeholder="Enter value" />
+      </div>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">From:</label>
+          <select id="fromUnit" class="w-full p-2 border rounded-md">
+              <option value="meters">Meters</option>
+              <option value="kilometers">Kilometers</option>
+              <option value="feet">Feet</option>
+              <option value="inches">Inches</option>
+          </select>
+      </div>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">To:</label>
+          <select id="toUnit" class="w-full p-2 border rounded-md">
+              <option value="meters">Meters</option>
+              <option value="kilometers">Kilometers</option>
+              <option value="feet">Feet</option>
+              <option value="inches">Inches</option>
+          </select>
+      </div>
+      <button onclick="convert()" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Convert</button>
+      <h3 class="text-lg font-semibold mt-4 text-center">Result: <span id="result" class="text-blue-500"></span></h3>
+  </div>
+  <!-- Length Converter -->
+  
+  <!-- Area Converter -->
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <h2 class="text-xl font-bold text-center mb-4">Area Converter</h2>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">Enter Value:</label>
+          <input type="number" id="areaInputValue" class="w-full p-2 border rounded-md" placeholder="Enter value" />
+      </div>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">From:</label>
+          <select id="areaFromUnit" class="w-full p-2 border rounded-md">
+              <option value="square_meters">Square Meters</option>
+              <option value="square_kilometers">Square Kilometers</option>
+              <option value="square_feet">Square Feet</option>
+              <option value="square_inches">Square Inches</option>
+          </select>
+      </div>
+      <div class="mb-4">
+          <label class="block mb-2 text-gray-700">To:</label>
+          <select id="areaToUnit" class="w-full p-2 border rounded-md">
+              <option value="square_meters">Square Meters</option>
+              <option value="square_kilometers">Square Kilometers</option>
+              <option value="square_feet">Square Feet</option>
+              <option value="square_inches">Square Inches</option>
+          </select>
+      </div>
+      <button onclick="convertArea()" class="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">Convert</button>
+      <h3 class="text-lg font-semibold mt-4 text-center">Result: <span id="areaResult" class="text-blue-500"></span></h3>
+  </div>
+  <!-- Area Converter -->
+     <!-- area converter -->
+    <script>
+      // Length Converter
+        function convert() {
+            const inputValue = parseFloat(document.getElementById('inputValue').value);
+            const fromUnit = document.getElementById('fromUnit').value;
+            const toUnit = document.getElementById('toUnit').value;
+            const conversionRates = {
+                meters: { meters: 1, kilometers: 0.001, feet: 3.28084, inches: 39.3701 },
+                kilometers: { meters: 1000, kilometers: 1, feet: 3280.84, inches: 39370.1 },
+                feet: { meters: 0.3048, kilometers: 0.0003048, feet: 1, inches: 12 },
+                inches: { meters: 0.0254, kilometers: 0.0000254, feet: 0.0833333, inches: 1 }
+            };
+            
+            const result = inputValue * conversionRates[fromUnit][toUnit];
+            document.getElementById('result').textContent = result.toFixed(4) + ' ' + toUnit;
+        }
+        // Length Converter
+        function convertArea() {
+            const areaInputValue = parseFloat(document.getElementById('areaInputValue').value);
+            const areaFromUnit = document.getElementById('areaFromUnit').value;
+            const areaToUnit = document.getElementById('areaToUnit').value;
+            const areaConversionRates = {
+                square_meters: { square_meters: 1, square_kilometers: 0.000001, square_feet: 10.7639, square_inches: 1550.0031 },
+                square_kilometers: { square_meters: 1000000, square_kilometers: 1, square_feet: 10763910.4, square_inches: 1550003100 },
+                square_feet: { square_meters: 0.092903, square_kilometers: 0.000000092903, square_feet: 1, square_inches: 144 },
+                square_inches: { square_meters: 0.00064516, square_kilometers: 0.00000000064516, square_feet: 0.00694444, square_inches: 1 }
+            };
+            
+            const areaResult = areaInputValue * areaConversionRates[areaFromUnit][areaToUnit];
+            document.getElementById('areaResult').textContent = areaResult.toFixed(4) + ' ' + areaToUnit.replace("_", " ");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BackgroundBegone - Free Background Removal Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.20.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-pix@2.2.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .canvas-container {
+            margin: 0 auto;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .truncate-2 {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .custom-file-upload {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .custom-file-upload:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tool-button {
+            transition: all 0.2s ease;
+        }
+        
+        .tool-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .tool-button.active {
+            background-color: #4338ca;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- Navbar -->
+    <nav class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-indigo-600 text-2xl font-bold">Background<span class="text-gray-800">Begone</span></span>
+            </div>
+            <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+                <a href="#how-it-works" class="text-gray-700 hover:text-indigo-600 transition-colors">How It Works</a>
+                <a href="#features" class="text-gray-700 hover:text-indigo-600 transition-colors">Features</a>
+                <a href="#examples" class="text-gray-700 hover:text-indigo-600 transition-colors">Examples</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="py-12 bg-indigo-50">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">Remove Image Backgrounds Instantly</h1>
+            <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">100% free, no watermarks, no limits. Powered by AI.</p>
+            <div class="flex justify-center">
+                <button id="upload-btn" class="bg-indigo-600 text-white px-8 py-4 rounded-lg text-lg font-semibold shadow-lg hover:bg-indigo-700 transition-colors">
+                    Upload Image
+                </button>
+                <input type="file" id="file-input" class="hidden" accept="image/*">
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Editor Area -->
+    <section id="editor-section" class="py-8 hidden">
+        <div class="container mx-auto px-4">
+            <div class="bg-white rounded-xl shadow-xl p-6">
+                <!-- Processing Loader -->
+                <div id="processing-loader" class="hidden">
+                    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+                            <div class="flex justify-center mb-4">
+                                <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-24 w-24"></div>
+                            </div>
+                            <h2 class="text-2xl font-bold text-center text-gray-800 mb-2">Processing Image</h2>
+                            <p class="text-gray-600 text-center">Our AI is removing the background. This may take a few moments...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Image Preview Area -->
+                    <div class="overflow-hidden bg-gray-50 rounded-lg p-4">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Original Image</h2>
+                        <div id="original-image-container" class="flex justify-center items-center min-h-[300px] border-2 border-dashed border-gray-300 rounded-lg">
+                            <img id="original-image" class="max-w-full max-h-[400px] hidden" alt="Original image">
+                            <div id="upload-placeholder" class="text-center p-6">
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500">No image uploaded yet</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Result Preview Area -->
+                    <div class="overflow-hidden bg-gray-50 rounded-lg p-4">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">Result</h2>
+                        <div id="result-container" class="flex justify-center items-center min-h-[300px] border-2 border-dashed border-gray-300 rounded-lg">
+                            <canvas id="result-canvas" class="max-w-full max-h-[400px] hidden"></canvas>
+                            <div id="result-placeholder" class="text-center p-6">
+                                <i class="fas fa-magic text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500">Background removed image will appear here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Panel -->
+                <div id="tools-panel" class="mt-8 p-4 bg-gray-100 rounded-lg hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Edit Your Image</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="eraser">
+                            <i class="fas fa-eraser text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Eraser</span>
+                        </button>
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="brush">
+                            <i class="fas fa-paint-brush text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Restore</span>
+                        </button>
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="crop">
+                            <i class="fas fa-crop text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Crop</span>
+                        </button>
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="rotate">
+                            <i class="fas fa-sync-alt text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Rotate</span>
+                        </button>
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="adjust">
+                            <i class="fas fa-sliders-h text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Adjust</span>
+                        </button>
+                        <button class="tool-button bg-white p-3 rounded-lg shadow-sm flex flex-col items-center justify-center" data-tool="undo">
+                            <i class="fas fa-undo text-indigo-600 mb-1"></i>
+                            <span class="text-sm text-gray-700">Undo</span>
+                        </button>
+                    </div>
+
+                    <!-- Tool Options (dynamic based on selected tool) -->
+                    <div id="tool-options" class="mt-4 p-4 bg-white rounded-lg shadow-sm hidden">
+                        <!-- Eraser Options -->
+                        <div id="eraser-options" class="tool-options hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Eraser Size</label>
+                            <input type="range" min="1" max="50" value="10" class="w-full" id="eraser-size">
+                        </div>
+                        
+                        <!-- Brush Options -->
+                        <div id="brush-options" class="tool-options hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Brush Size</label>
+                            <input type="range" min="1" max="50" value="10" class="w-full" id="brush-size">
+                        </div>
+                        
+                        <!-- Crop Options -->
+                        <div id="crop-options" class="tool-options hidden">
+                            <div class="flex justify-between">
+                                <button id="crop-apply" class="bg-indigo-600 text-white px-4 py-2 rounded">Apply Crop</button>
+                                <button id="crop-cancel" class="bg-gray-300 text-gray-800 px-4 py-2 rounded">Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Rotate Options -->
+                        <div id="rotate-options" class="tool-options hidden">
+                            <div class="flex space-x-2">
+                                <button id="rotate-left" class="bg-gray-200 p-2 rounded"><i class="fas fa-undo"></i> 90°</button>
+                                <button id="rotate-right" class="bg-gray-200 p-2 rounded"><i class="fas fa-redo"></i> 90°</button>
+                                <button id="flip-h" class="bg-gray-200 p-2 rounded"><i class="fas fa-arrows-alt-h"></i> Flip</button>
+                                <button id="flip-v" class="bg-gray-200 p-2 rounded"><i class="fas fa-arrows-alt-v"></i> Flip</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Adjust Options -->
+                        <div id="adjust-options" class="tool-options hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Brightness</label>
+                                    <input type="range" min="-100" max="100" value="0" class="w-full" id="brightness">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Contrast</label>
+                                    <input type="range" min="-100" max="100" value="0" class="w-full" id="contrast">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Saturation</label>
+                                    <input type="range" min="-100" max="100" value="0" class="w-full" id="saturation">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Download Options -->
+                <div id="download-panel" class="mt-8 p-4 bg-gray-100 rounded-lg hidden">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">Download Options</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button id="download-png" class="bg-indigo-600 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>Download PNG</span>
+                        </button>
+                        <button id="download-jpg" class="bg-white text-indigo-600 border border-indigo-600 px-4 py-3 rounded-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>Download JPG</span>
+                        </button>
+                        <button id="download-webp" class="bg-white text-indigo-600 border border-indigo-600 px-4 py-3 rounded-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-download"></i>
+                            <span>Download WebP</span>
+                        </button>
+                        <button id="new-image" class="bg-gray-600 text-white px-4 py-3 rounded-lg flex items-center justify-center space-x-2">
+                            <i class="fas fa-plus"></i>
+                            <span>New Image</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">How It Works</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center p-6 bg-gray-50 rounded-lg shadow-sm">
+                    <div class="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-cloud-upload-alt text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">1. Upload Your Image</h3>
+                    <p class="text-gray-600">Select any image from your device. We support JPG, PNG, and WebP formats.</p>
+                </div>
+                <div class="text-center p-6 bg-gray-50 rounded-lg shadow-sm">
+                    <div class="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-magic text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">2. AI Processing</h3>
+                    <p class="text-gray-600">Our AI instantly detects and removes the background from your image.</p>
+                </div>
+                <div class="text-center p-6 bg-gray-50 rounded-lg shadow-sm">
+                    <div class="rounded-full bg-indigo-100 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-download text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">3. Download Result</h3>
+                    <p class="text-gray-600">Fine-tune your image with our editing tools, then download in your preferred format.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-indigo-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Features</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-infinity text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Unlimited Free Usage</h3>
+                    <p class="text-gray-600">No limits on the number of images you can process. Use our tool as much as you need.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-brain text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">AI-Powered</h3>
+                    <p class="text-gray-600">Advanced machine learning algorithms provide high-quality background removal.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-paint-brush text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Advanced Editing</h3>
+                    <p class="text-gray-600">Fine-tune with our suite of editing tools for perfect results every time.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-lock text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">100% Private</h3>
+                    <p class="text-gray-600">All processing happens in your browser. We never store your images.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-bolt text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Fast Processing</h3>
+                    <p class="text-gray-600">Get results in seconds, even with complex images.</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="text-indigo-600 mb-4">
+                        <i class="fas fa-mobile-alt text-3xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Mobile Friendly</h3>
+                    <p class="text-gray-600">Works on all devices - desktop, tablet, and mobile.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Examples Section -->
+    <section id="examples" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Example Results</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Before/After Portrait</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-image text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Original</p>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-user text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Result</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Before/After Product</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-box text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Original</p>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-box-open text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Result</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 rounded-lg overflow-hidden shadow-md">
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 mb-2">Before/After Nature</h3>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-tree text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Original</p>
+                            </div>
+                            <div class="bg-white p-2 rounded">
+                                <div class="aspect-square bg-gray-200 flex items-center justify-center">
+                                    <i class="fas fa-leaf text-3xl text-gray-400"></i>
+                                </div>
+                                <p class="text-center text-sm mt-2 text-gray-600">Result</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">Frequently Asked Questions</h2>
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">How much does it cost?</h3>
+                    <p class="text-gray-600">Our tool is completely free with no hidden costs or watermarks. There are no limits on the number of images you can process.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">Are my images stored on your servers?</h3>
+                    <p class="text-gray-600">No. All processing happens directly in your browser. Your images never leave your device, ensuring complete privacy and security.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">What image formats are supported?</h3>
+                    <p class="text-gray-600">Our tool supports JPG, PNG, and WebP formats for input images. You can download your results in PNG (with transparency), JPG, or WebP.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">What's the maximum image size?</h3>
+                    <p class="text-gray-600">For optimal performance, we recommend using images up to 4000x4000 pixels. Larger images will be automatically resized to ensure smooth processing.</p>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-2">How accurate is the background removal?</h3>
+                    <p class="text-gray-600">Our AI model provides high-quality results for most images. Complex edges or similar foreground/background colors may require some manual touch-ups with our editing tools.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 bg-indigo-600">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold text-white mb-6">Ready to Remove Backgrounds?</h2>
+            <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">Start creating transparent background images for your projects in seconds.</p>
+            <button id="cta-upload-btn" class="bg-white text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold shadow-lg hover:bg-gray-100 transition-colors">
+                Try It Now - Free Forever
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">BackgroundBegone</h3>
+                    <p class="text-gray-400 mb-4">Free background removal powered by open-source AI. No watermarks, no limits.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="fab fa-github"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#how-it-works" class="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
+                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                        <li><a href="#examples" class="text-gray-400 hover:text-white transition-colors">Examples</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold mb-4">About</h3>
+                    <p class="text-gray-400">BackgroundBegone is a free tool using open-source libraries to provide professional background removal without the cost.</p>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2023 BackgroundBegone. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let canvas;
+        let originalImage;
+        let model;
+        let imageHistory = [];
+        let currentTool = null;
+        let isModelLoaded = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup event listeners
+            document.getElementById('upload-btn').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+            
+            document.getElementById('cta-upload-btn').addEventListener('click', function() {
+                document.getElementById('file-input').click();
+            });
+
+            document.getElementById('file-input').addEventListener('change', handleImageUpload);
+
+            // Setup download buttons
+            document.getElementById('download-png').addEventListener('click', function() {
+                downloadImage('png');
+            });
+            
+            document.getElementById('download-jpg').addEventListener('click', function() {
+                downloadImage('jpg');
+            });
+            
+            document.getElementById('download-webp').addEventListener('click', function() {
+                downloadImage('webp');
+            });
+
+            document.getElementById('new-image').addEventListener('click', function() {
+                resetEditor();
+            });
+
+            // Setup tool buttons
+            document.querySelectorAll('.tool-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const tool = this.getAttribute('data-tool');
+                    activateTool(tool);
+                });
+            });
+
+            // Load BodyPix model in the background
+            loadModel();
+
+            // Setup drag and drop for the entire page
+            const dropArea = document;
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                document.body.classList.add('bg-indigo-100');
+            }
+            
+            function unhighlight() {
+                document.body.classList.remove('bg-indigo-100');
+            }
+            
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    handleFiles(files);
+                }
+            }
+            
+            function handleFiles(files) {
+                if (files[0].type.match('image.*')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        processUploadedImage(e.target.result);
+                    };
+                    
+                    reader.readAsDataURL(files[0]);
+                }
+            }
+
+            // Setup rotation controls
+            document.getElementById('rotate-left').addEventListener('click', function() {
+                rotateImage(-90);
+            });
+            
+            document.getElementById('rotate-right').addEventListener('click', function() {
+                rotateImage(90);
+            });
+            
+            document.getElementById('flip-h').addEventListener('click', function() {
+                flipImage('horizontal');
+            });
+            
+            document.getElementById('flip-v').addEventListener('click', function() {
+                flipImage('vertical');
+            });
+
+            // Setup adjustments
+            const brightnessSlider = document.getElementById('brightness');
+            brightnessSlider.addEventListener('input', function() {
+                applyAdjustments();
+            });
+            
+            const contrastSlider = document.getElementById('contrast');
+            contrastSlider.addEventListener('input', function() {
+                applyAdjustments();
+            });
+            
+            const saturationSlider = document.getElementById('saturation');
+            saturationSlider.addEventListener('input', function() {
+                applyAdjustments();
+            });
+
+            // Crop controls
+            document.getElementById('crop-apply').addEventListener('click', function() {
+                applyCrop();
+            });
+            
+            document.getElementById('crop-cancel').addEventListener('click', function() {
+                cancelCrop();
+            });
+        });
+
+        async function loadModel() {
+            try {
+                console.log("Loading BodyPix model...");
+                model = await bodyPix.load({
+                    architecture: 'MobileNetV1',
+                    outputStride: 16,
+                    multiplier: 0.75,
+                    quantBytes: 2
+                });
+                
+                isModelLoaded = true;
+                console.log("BodyPix model loaded successfully!");
+            } catch (error) {
+                console.error("Error loading BodyPix model:", error);
+            }
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image.*')) {
+                alert('Please select an image file.');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                processUploadedImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function processUploadedImage(imageSrc) {
+            // Show the editor section
+            document.getElementById('editor-section').classList.remove('hidden');
+            
+            // Scroll to editor section
+            document.getElementById('editor-section').scrollIntoView({ behavior: 'smooth' });
+            
+            // Show processing loader
+            document.getElementById('processing-loader').classList.remove('hidden');
+            
+            // Hide upload placeholder and show original image
+            document.getElementById('upload-placeholder').classList.add('hidden');
+            const originalImageEl = document.getElementById('original-image');
+            originalImageEl.src = imageSrc;
+            originalImageEl.classList.remove('hidden');
+            
+            // Create original image object for processing
+            originalImage = new Image();
+            originalImage.onload = function() {
+                const aspectRatio = originalImage.width / originalImage.height;
+                let newWidth, newHeight;
+                
+                // Resize if image is too large
+                if (originalImage.width > 1500 || originalImage.height > 1500) {
+                    if (originalImage.width > originalImage.height) {
+                        newWidth = 1500;
+                        newHeight = Math.round(newWidth / aspectRatio);
+                    } else {
+                        newHeight = 1500;
+                        newWidth = Math.round(newHeight * aspectRatio);
+                    }
+                } else {
+                    newWidth = originalImage.width;
+                    newHeight = originalImage.height;
+                }
+                
+                // Initialize canvas
+                const resultCanvas = document.getElementById('result-canvas');
+                resultCanvas.width = newWidth;
+                resultCanvas.height = newHeight;
+                
+                // Initialize Fabric.js canvas
+                canvas = new fabric.Canvas('result-canvas', {
+                    backgroundColor: 'transparent'
+                });
+                
+                canvas.setWidth(newWidth);
+                canvas.setHeight(newHeight);
+                
+                // Process the image with BodyPix when model is loaded
+                if (isModelLoaded) {
+                    removeBackground();
+                } else {
+                    // If model isn't loaded yet, wait for it
+                    const waitForModel = setInterval(function() {
+                        if (isModelLoaded) {
+                            clearInterval(waitForModel);
+                            removeBackground();
+                        }
+                    }, 500);
+                }
+            };
+            originalImage.src = imageSrc;
+        }
+
+        async function removeBackground() {
+            try {
+                // Create a temporary canvas to draw the original image
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = originalImage.width;
+                tempCanvas.height = originalImage.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                tempCtx.drawImage(originalImage, 0, 0);
+                
+                // Get image data for segmentation
+                const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                
+                // Perform segmentation
+                const segmentation = await model.segmentPerson(imageData, {
+                    flipHorizontal: false,
+                    internalResolution: 'medium',
+                    segmentationThreshold: 0.7,
+                    multiPersonDecoding: false
+                });
+                
+                // Apply the segmentation mask
+                const mask = segmentation.data;
+                const newImageData = tempCtx.createImageData(imageData.width, imageData.height);
+                const newData = newImageData.data;
+                
+                for (let i = 0; i < mask.length; i++) {
+                    const j = i * 4;
+                    if (mask[i]) {
+                        newData[j] = imageData.data[j];
+                        newData[j + 1] = imageData.data[j + 1];
+                        newData[j + 2] = imageData.data[j + 2];
+                        newData[j + 3] = imageData.data[j + 3];
+                    } else {
+                        newData[j] = 0;
+                        newData[j + 1] = 0;
+                        newData[j + 2] = 0;
+                        newData[j + 3] = 0; // transparent
+                    }
+                }
+                
+                tempCtx.putImageData(newImageData, 0, 0);
+                
+                // Convert the processed canvas to a Fabric.js image
+                fabric.Image.fromURL(tempCanvas.toDataURL(), function(img) {
+                    img.set({
+                        left: 0,
+                        top: 0,
+                        scaleX: canvas.width / img.width,
+                        scaleY: canvas.height / img.height
+                    });
+                    
+                    canvas.add(img);
+                    canvas.renderAll();
+                    
+                    // Save to history
+                    saveToHistory();
+                    
+                    // Show result
+                    document.getElementById('result-placeholder').classList.add('hidden');
+                    document.getElementById('result-canvas').classList.remove('hidden');
+                    
+                    // Show tools and download panel
+                    document.getElementById('tools-panel').classList.remove('hidden');
+                    document.getElementById('download-panel').classList.remove('hidden');
+                    
+                    // Hide processing loader
+                    document.getElementById('processing-loader').classList.add('hidden');
+                });
+                
+            } catch (error) {
+                console.error("Error removing background:", error);
+                document.getElementById('processing-loader').classList.add('hidden');
+                alert("Error processing image. Please try again with a different image.");
+            }
+        }
+
+        function activateTool(tool) {
+            // Reset all tool buttons
+            document.querySelectorAll('.tool-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Hide all tool options
+            document.querySelectorAll('.tool-options').forEach(options => {
+                options.classList.add('hidden');
+            });
+            
+            // If the same tool is clicked again, deactivate it
+            if (currentTool === tool) {
+                currentTool = null;
+                canvas.isDrawingMode = false;
+                canvas.selection = true;
+                document.getElementById('tool-options').classList.add('hidden');
+                return;
+            }
+            
+            // Set current tool
+            currentTool = tool;
+            
+            // Activate the clicked tool button
+            document.querySelector(`.tool-button[data-tool="${tool}"]`).classList.add('active');
+            
+            // Show tool options
+            document.getElementById('tool-options').classList.remove('hidden');
+            
+            switch (tool) {
+                case 'eraser':
+                    document.getElementById('eraser-options').classList.remove('hidden');
+                    setupEraser();
+                    break;
+                case 'brush':
+                    document.getElementById('brush-options').classList.remove('hidden');
+                    setupBrush();
+                    break;
+                case 'crop':
+                    document.getElementById('crop-options').classList.remove('hidden');
+                    setupCrop();
+                    break;
+                case 'rotate':
+                    document.getElementById('rotate-options').classList.remove('hidden');
+                    break;
+                case 'adjust':
+                    document.getElementById('adjust-options').classList.remove('hidden');
+                    break;
+                case 'undo':
+                    undoLastAction();
+                    currentTool = null;
+                    break;
+            }
+        }
+
+        function setupEraser() {
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush = new fabric.EraserBrush(canvas);
+            canvas.freeDrawingBrush.width = parseInt(document.getElementById('eraser-size').value, 10);
+            
+            document.getElementById('eraser-size').addEventListener('input', function() {
+                canvas.freeDrawingBrush.width = parseInt(this.value, 10);
+            });
+        }
+
+        function setupBrush() {
+            canvas.isDrawingMode = true;
+            canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+            canvas.freeDrawingBrush.width = parseInt(document.getElementById('brush-size').value, 10);
+            canvas.freeDrawingBrush.color = "rgba(0,0,0,1)";
+            
+            document.getElementById('brush-size').addEventListener('input', function() {
+                canvas.freeDrawingBrush.width = parseInt(this.value, 10);
+            });
+        }
+
+        let cropRect;
+        function setupCrop() {
+            canvas.selection = false;
+            
+            // Create a rectangle for crop selection
+            cropRect = new fabric.Rect({
+                left: canvas.width * 0.1,
+                top: canvas.height * 0.1,
+                width: canvas.width * 0.8,
+                height: canvas.height * 0.8,
+                fill: 'rgba(0,0,0,0.1)',
+                stroke: '#2563eb',
+                strokeWidth: 2,
+                strokeDashArray: [5, 5],
+                transparentCorners: false,
+                cornerColor: '#2563eb',
+                cornerStrokeColor: '#ffffff',
+                borderColor: '#2563eb',
+                cornerSize: 10
+            });
+            
+            canvas.add(cropRect);
+            canvas.setActiveObject(cropRect);
+        }
+
+        function applyCrop() {
+            if (!cropRect) return;
+            
+            // Save current canvas state before cropping
+            saveToHistory();
+            
+            // Get crop dimensions
+            const left = Math.max(0, cropRect.left);
+            const top = Math.max(0, cropRect.top);
+            const width = Math.min(cropRect.width * cropRect.scaleX, canvas.width - left);
+            const height = Math.min(cropRect.height * cropRect.scaleY, canvas.height - top);
+            
+            // Create a new canvas with the cropped dimensions
+            const newCanvas = document.createElement('canvas');
+            newCanvas.width = width;
+            newCanvas.height = height;
+            const newCtx = newCanvas.getContext('2d');
+            
+            // Get the current canvas as an image
+            const dataUrl = canvas.toDataURL();
+            const img = new Image();
+            
+            img.onload = function() {
+                // Draw the cropped portion
+                newCtx.drawImage(
+                    img,
+                    left, top, width, height,
+                    0, 0, width, height
+                );
+                
+                // Reset canvas
+                canvas.clear();
+                canvas.setWidth(width);
+                canvas.setHeight(height);
+                
+                // Add the cropped image to canvas
+                fabric.Image.fromURL(newCanvas.toDataURL(), function(img) {
+                    canvas.add(img);
+                    canvas.renderAll();
+                    
+                    // Reset crop tool
+                    currentTool = null;
+                    document.querySelectorAll('.tool-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.getElementById('tool-options').classList.add('hidden');
+                });
+            };
+            
+            img.src = dataUrl;
+            cropRect = null;
+        }
+
+        function cancelCrop() {
+            if (cropRect) {
+                canvas.remove(cropRect);
+                canvas.renderAll();
+                cropRect = null;
+            }
+            
+            currentTool = null;
+            document.querySelectorAll('.tool-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('tool-options').classList.add('hidden');
+        }
+
+        function rotateImage(angle) {
+            // Save current state before rotation
+            saveToHistory();
+            
+            // Get canvas objects
+            const objects = canvas.getObjects();
+            if (objects.length === 0) return;
+            
+            // Rotate each object
+            objects.forEach(obj => {
+                obj.rotate(obj.angle + angle);
+            });
+            
+            canvas.renderAll();
+        }
+
+        function flipImage(direction) {
+            // Save current state before flipping
+            saveToHistory();
+            
+            // Get canvas objects
+            const objects = canvas.getObjects();
+            if (objects.length === 0) return;
+            
+            // Flip each object
+            objects.forEach(obj => {
+                if (direction === 'horizontal') {
+                    obj.set('flipX', !obj.flipX);
+                } else {
+                    obj.set('flipY', !obj.flipY);
+                }
+            });
+            
+            canvas.renderAll();
+        }
+
+        function applyAdjustments() {
+            const brightness = parseInt(document.getElementById('brightness').value, 10);
+            const contrast = parseInt(document.getElementById('contrast').value, 10);
+            const saturation = parseInt(document.getElementById('saturation').value, 10);
+            
+            // Get the first object (should be the image)
+            const objects = canvas.getObjects();
+            if (objects.length === 0) return;
+            
+            const img = objects[0];
+            
+            // Apply filters
+            img.filters = [];
+            
+            if (brightness !== 0) {
+                img.filters.push(new fabric.Image.filters.Brightness({
+                    brightness: brightness / 100
+                }));
+            }
+            
+            if (contrast !== 0) {
+                img.filters.push(new fabric.Image.filters.Contrast({
+                    contrast: contrast / 100
+                }));
+            }
+            
+            if (saturation !== 0) {
+                img.filters.push(new fabric.Image.filters.Saturation({
+                    saturation: saturation / 100
+                }));
+            }
+            
+            img.applyFilters();
+            canvas.renderAll();
+        }
+
+        function saveToHistory() {
+            // Save current canvas state to history
+            if (canvas) {
+                imageHistory.push(canvas.toJSON());
+                
+                // Limit history size to prevent memory issues
+                if (imageHistory.length > 10) {
+                    imageHistory.shift();
+                }
+            }
+        }
+
+        function undoLastAction() {
+            // Undo last action by restoring previous state
+            if (imageHistory.length > 1) {
+                // Remove current state
+                imageHistory.pop();
+                
+                // Get previous state
+                const previousState = imageHistory[imageHistory.length - 1];
+                
+                // Restore canvas to previous state
+                canvas.loadFromJSON(previousState, function() {
+                    canvas.renderAll();
+                });
+            }
+        }
+
+        function downloadImage(format) {
+            let dataUrl;
+            
+            if (format === 'png') {
+                // PNG with transparency
+                dataUrl = canvas.toDataURL({
+                    format: 'png',
+                    quality: 1
+                });
+            } else if (format === 'jpg') {
+                // JPG with white background
+                dataUrl = canvas.toDataURL({
+                    format: 'jpeg',
+                    quality: 0.9,
+                    backgroundColor: '#ffffff'
+                });
+            } else if (format === 'webp') {
+                // WebP format
+                dataUrl = canvas.toDataURL({
+                    format: 'webp',
+                    quality: 0.9
+                });
+            }
+            
+            // Create download link
+            const link = document.createElement('a');
+            link.download = `background-removed.${format}`;
+            link.href = dataUrl;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function resetEditor() {
+            // Reset the editor to initial state
+            if (canvas) {
+                canvas.clear();
+                imageHistory = [];
+            }
+            
+            // Hide editor elements
+            document.getElementById('original-image').classList.add('hidden');
+            document.getElementById('upload-placeholder').classList.remove('hidden');
+            document.getElementById('result-canvas').classList.add('hidden');
+            document.getElementById('result-placeholder').classList.remove('hidden');
+            document.getElementById('tools-panel').classList.add('hidden');
+            document.getElementById('download-panel').classList.add('hidden');
+            document.getElementById('file-input').value = '';
+            
+            // Reset tools
+            currentTool = null;
+            document.querySelectorAll('.tool-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById('tool-options').classList.add('hidden');
+            
+            // Reset sliders
+            document.getElementById('brightness').value = 0;
+            document.getElementById('contrast').value = 0;
+            document.getElementById('saturation').value = 0;
+            
+            // Scroll to top
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Add mock implementation of EraserBrush if not available
+        if (typeof fabric.EraserBrush === 'undefined') {
+            fabric.EraserBrush = fabric.util.createClass(fabric.PencilBrush, {
+                type: 'eraser',
+                
+                initialize: function(canvas) {
+                    this.callSuper('initialize', canvas);
+                    this.color = 'rgba(255, 255, 255, 1)';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JPG to PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 mt-8 max-w-md bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">JPG to PDF Converter</h1>
+        <form class="space-y-4">
+            <!-- File Input -->
+            <input type="file" id="image-input" accept="image/jpeg,image/jpg" class="block w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            
+            <!-- Convert Button -->
+            <button id="convert-button" type="button" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                Convert to PDF
+            </button>
+        </form>
+
+        <!-- Preview Section -->
+        <div id="preview-container" class="mt-6 text-center hidden">
+            <h2 class="text-xl font-semibold mb-4">Image Preview</h2>
+            <img id="preview-image" class="mx-auto mb-4 rounded-lg shadow-md max-h-64" alt="Image Preview">
+        </div>
+
+        <!-- Output Section -->
+        <div id="output-container" class="mt-6 text-center hidden">
+            <h2 class="text-xl font-semibold mb-4">PDF Ready</h2>
+            <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="mt-2">Your PDF is ready to download!</p>
+            </div>
+            <button id="download-button" class="inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                Download PDF
+            </button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden">
+            <p id="error-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // DOM elements
+        const imageInput = document.getElementById('image-input');
+        const convertButton = document.getElementById('convert-button');
+        const previewContainer = document.getElementById('preview-container');
+        const previewImage = document.getElementById('preview-image');
+        const outputContainer = document.getElementById('output-container');
+        const downloadButton = document.getElementById('download-button');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        
+        // Store PDF data
+        let pdfBlob = null;
+
+        // Show image preview when file is selected
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            if (!file.type.match('image/jpeg') {
+                showError('Please select a JPG/JPEG image file.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                previewImage.src = event.target.result;
+                previewContainer.classList.remove('hidden');
+                outputContainer.classList.add('hidden');
+                errorMessage.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Convert image to PDF
+        convertButton.addEventListener('click', function() {
+            const file = imageInput.files[0];
+            
+            if (!file) {
+                showError('Please select a JPG file first.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    try {
+                        // Create PDF
+                        const pdf = new jsPDF({
+                            orientation: img.width > img.height ? 'landscape' : 'portrait',
+                            unit: 'mm'
+                        });
+                        
+                        // Calculate dimensions to fit the page
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        
+                        const ratio = Math.min(
+                            pageWidth / img.width * 25.4 / 96, // 96 DPI to mm
+                            pageHeight / img.height * 25.4 / 96
+                        );
+                        
+                        const width = img.width * ratio;
+                        const height = img.height * ratio;
+                        
+                        // Add image to PDF
+                        pdf.addImage(
+                            event.target.result, 
+                            'JPEG', 
+                            (pageWidth - width) / 2, // center horizontally
+                            (pageHeight - height) / 2, // center vertically
+                            width,
+                            height
+                        );
+                        
+                        // Generate PDF blob
+                        const pdfOutput = pdf.output('blob');
+                        pdfBlob = pdfOutput;
+                        
+                        // Show download button
+                        outputContainer.classList.remove('hidden');
+                        errorMessage.classList.add('hidden');
+                    } catch (error) {
+                        showError('Error converting image to PDF. Please try again.');
+                        console.error('Conversion error:', error);
+                    }
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Download PDF
+        downloadButton.addEventListener('click', function() {
+            if (!pdfBlob) {
+                showError('No PDF generated yet.');
+                return;
+            }
+            
+            const url = URL.createObjectURL(pdfBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'converted-image.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // Show error message
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            outputContainer.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

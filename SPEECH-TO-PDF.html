@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body>
+    <div style="min-height: 100vh; overflow: hidden" class="bg-white">
+        <div
+          class="relative isolate px-6 pt-14 lg:px-8"
+          style="
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            margin-top: 5%;
+          "
+        >
+          <div
+            class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
+            aria-hidden="true"
+          >
+            <div
+              class="myanime relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
+              style="
+                clip-path: polygon(
+                  74.1% 44.1%,
+                  100% 61.6%,
+                  97.5% 26.9%,
+                  85.5% 0.1%,
+                  80.7% 2%,
+                  72.5% 32.5%,
+                  60.2% 62.4%,
+                  52.4% 68.1%,
+                  47.5% 58.3%,
+                  45.2% 34.5%,
+                  27.5% 76.7%,
+                  0.1% 64.9%,
+                  17.9% 100%,
+                  27.6% 76.8%,
+                  76.1% 97.7%,
+                  74.1% 44.1%
+                );
+              "
+            ></div>
+          </div>
+          <div
+            class="half-section"
+            style="
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-flow: column;
+              margin-block: 20px;
+            "
+          >
+            <h1 class="toolheading" style="margin-top: 50px">
+              SPEECH TO PDF Converter
+            </h1>
+            <p class="description" style="margin-top: 30px">
+              Convert your PDF files to CSV format quickly and accurately with our
+              tool. Ideal for extracting tabular data and transforming it into a
+              usable spreadsheet format for analysis, reporting, and data
+              manipulation.
+            </p>
+  
+            <textarea
+              style="
+                min-height: 250px;
+                width: 90%;
+                margin: auto;
+                margin-block: 20px;
+              "
+              id="textOutput"
+              placeholder="Your text will appear here..."
+            ></textarea>
+  
+            <div class="toolbox">
+              <button
+                style="
+                  padding: 13px 30px;
+                  border-radius: 50px;
+                  background: black;
+                  color: white;
+                  cursor: pointer;
+                "
+                onclick="startRecognition()"
+              >
+                Start Speech
+              </button>
+  
+              <button class="downloadbutton" onclick="generatePDF()">
+                Download PDF
+              </button>
+            </div>
+          </div>
+  
+          <div
+            class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
+            aria-hidden="true"
+          >
+            <div
+              class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
+              style="
+                clip-path: polygon(
+                  74.1% 44.1%,
+                  100% 61.6%,
+                  97.5% 26.9%,
+                  85.5% 0.1%,
+                  80.7% 2%,
+                  72.5% 32.5%,
+                  60.2% 62.4%,
+                  52.4% 68.1%,
+                  47.5% 58.3%,
+                  45.2% 34.5%,
+                  27.5% 76.7%,
+                  0.1% 64.9%,
+                  17.9% 100%,
+                  27.6% 76.8%,
+                  76.1% 97.7%,
+                  74.1% 44.1%
+                );
+              "
+            ></div>
+          </div>
+        </div>
+      </div>
+  
+      <script src="https://cdn.tailwindcss.com"></script>
+      <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+  
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+      <script>
+        let recognition;
+        function startRecognition() {
+          if (!("webkitSpeechRecognition" in window)) {
+            alert(
+              "Speech recognition not supported in this browser. Please use Google Chrome."
+            );
+            return;
+          }
+  
+          recognition = new webkitSpeechRecognition();
+          recognition.continuous = true;
+          recognition.interimResults = false;
+          recognition.lang = "en-US";
+  
+          recognition.onstart = function () {
+            console.log("Speech recognition started");
+          };
+  
+          recognition.onresult = function (event) {
+            let finalTranscript = "";
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+              }
+            }
+            document.getElementById("textOutput").value += finalTranscript + " ";
+          };
+  
+          recognition.onerror = function (event) {
+            console.log("Error occurred in recognition: " + event.error);
+          };
+  
+          recognition.onend = function () {
+            console.log("Speech recognition ended");
+          };
+  
+          recognition.start();
+        }
+  
+        function generatePDF() {
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+          const text = document.getElementById("textOutput").value;
+  
+          doc.text(text, 10, 10);
+          doc.save("converted.pdf");
+        }
+      </script>
+</body>
+</html>

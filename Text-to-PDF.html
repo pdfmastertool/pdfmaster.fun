@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text to PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 mt-8 max-w-2xl bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">Text to PDF Converter</h1>
+        
+        <div class="space-y-4">
+            <!-- Text Input -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Enter your text</label>
+                <textarea id="text-input" rows="10" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Type or paste your text here..."></textarea>
+            </div>
+            
+            <!-- Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Page Size</label>
+                    <select id="page-size" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <option value="a4">A4</option>
+                        <option value="letter">Letter</option>
+                        <option value="a5">A5</option>
+                        <option value="a3">A3</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Orientation</label>
+                    <select id="orientation" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <option value="portrait">Portrait</option>
+                        <option value="landscape">Landscape</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Font Size</label>
+                    <select id="font-size" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <option value="10">10pt</option>
+                        <option value="12" selected>12pt</option>
+                        <option value="14">14pt</option>
+                        <option value="16">16pt</option>
+                        <option value="18">18pt</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Margin (mm)</label>
+                    <input type="number" id="margin" value="15" min="5" max="50" class="w-full p-2 border border-gray-300 rounded-lg">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Line Height</label>
+                    <select id="line-height" class="w-full p-2 border border-gray-300 rounded-lg">
+                        <option value="1.0">1.0</option>
+                        <option value="1.2" selected>1.2</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2.0">2.0</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Convert Button -->
+            <button id="convert-button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                <span id="button-text">Convert to PDF</span>
+                <span id="button-spinner" class="hidden ml-2">
+                    <svg class="animate-spin h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </span>
+            </button>
+        </div>
+
+        <!-- Preview Section -->
+        <div id="preview-container" class="mt-8 hidden">
+            <h2 class="text-xl font-semibold mb-4 border-b pb-2">PDF Preview</h2>
+            <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <iframe id="pdf-preview" class="w-full min-h-[500px] border-0"></iframe>
+            </div>
+            <div class="mt-4 flex justify-center space-x-4">
+                <button id="download-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg">
+                    Download PDF
+                </button>
+                <button id="new-conversion" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg">
+                    New Conversion
+                </button>
+            </div>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline mr-1" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+            </svg>
+            <span id="error-text"></span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // DOM elements
+        const textInput = document.getElementById('text-input');
+        const convertButton = document.getElementById('convert-button');
+        const downloadButton = document.getElementById('download-button');
+        const newConversionBtn = document.getElementById('new-conversion');
+        const previewContainer = document.getElementById('preview-container');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        const buttonText = document.getElementById('button-text');
+        const buttonSpinner = document.getElementById('button-spinner');
+        
+        // Options
+        const pageSizeSelect = document.getElementById('page-size');
+        const orientationSelect = document.getElementById('orientation');
+        const fontSizeSelect = document.getElementById('font-size');
+        const marginInput = document.getElementById('margin');
+        const lineHeightSelect = document.getElementById('line-height');
+        
+        let pdfBlob = null;
+
+        // Convert button click handler
+        convertButton.addEventListener('click', async () => {
+            const text = textInput.value.trim();
+            
+            if (!text) {
+                showError('Please enter some text to convert.');
+                return;
+            }
+            
+            try {
+                // Show loading state
+                buttonText.textContent = 'Converting...';
+                buttonSpinner.classList.remove('hidden');
+                convertButton.disabled = true;
+                errorMessage.classList.add('hidden');
+                
+                // Get options
+                const pageSize = pageSizeSelect.value;
+                const orientation = orientationSelect.value;
+                const fontSize = parseInt(fontSizeSelect.value);
+                const margin = parseInt(marginInput.value);
+                const lineHeight = parseFloat(lineHeightSelect.value);
+                
+                // Generate PDF (with slight delay to show loading state)
+                setTimeout(() => {
+                    generatePDF(text, pageSize, orientation, fontSize, margin, lineHeight);
+                    
+                    // Reset button state
+                    buttonText.textContent = 'Convert to PDF';
+                    buttonSpinner.classList.add('hidden');
+                    convertButton.disabled = false;
+                }, 300);
+                
+            } catch (error) {
+                showError('An error occurred during conversion. Please try again.');
+                console.error('Conversion error:', error);
+                
+                // Reset button state
+                buttonText.textContent = 'Convert to PDF';
+                buttonSpinner.classList.add('hidden');
+                convertButton.disabled = false;
+            }
+        });
+
+        // Download button click handler
+        downloadButton.addEventListener('click', () => {
+            if (pdfBlob) {
+                const url = URL.createObjectURL(pdfBlob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'converted-text.pdf';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        });
+
+        // New conversion button
+        newConversionBtn.addEventListener('click', () => {
+            previewContainer.classList.add('hidden');
+            textInput.value = '';
+            textInput.focus();
+        });
+
+        function generatePDF(text, pageSize, orientation, fontSize, margin, lineHeight) {
+            try {
+                // Create new PDF document
+                const doc = new jsPDF({
+                    orientation: orientation,
+                    unit: 'mm',
+                    format: pageSize
+                });
+                
+                // Set font
+                doc.setFont('helvetica');
+                doc.setFontSize(fontSize);
+                
+                // Split text into lines that fit within page width
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const maxWidth = pageWidth - (margin * 2);
+                
+                const lines = doc.splitTextToSize(text, maxWidth);
+                
+                // Calculate line height in mm (approximate conversion from pt to mm)
+                const lineHeightInMM = (fontSize * lineHeight) * 0.352778;
+                
+                let y = margin;
+                
+                // Add text line by line
+                for (let i = 0; i < lines.length; i++) {
+                    // Check if we need a new page
+                    if (y + lineHeightInMM > doc.internal.pageSize.getHeight() - margin) {
+                        doc.addPage(pageSize, orientation);
+                        y = margin;
+                    }
+                    
+                    doc.text(lines[i], margin, y);
+                    y += lineHeightInMM;
+                }
+                
+                // Generate PDF blob for preview and download
+                const pdfOutput = doc.output('blob');
+                pdfBlob = pdfOutput;
+                
+                // Show preview
+                const pdfUrl = URL.createObjectURL(pdfOutput);
+                pdfPreview.src = pdfUrl;
+                previewContainer.classList.remove('hidden');
+                
+                // Scroll to preview
+                previewContainer.scrollIntoView({ behavior: 'smooth' });
+                
+            } catch (error) {
+                throw error;
+            }
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            errorMessage.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

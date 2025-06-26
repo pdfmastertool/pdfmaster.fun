@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature-Rich Logo Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
+        <h1 class="text-2xl font-bold mb-4 text-center">Logo Generator</h1>
+
+        <!-- Input Form -->
+        <div class="grid grid-cols-2 gap-4">
+            <!-- Text Customization -->
+            <div>
+                <label class="block text-sm">Logo Text</label>
+                <input id="logoText" type="text" placeholder="Enter logo text" class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm">Font Style</label>
+                <select id="fontStyle" class="w-full p-2 border rounded">
+                    <option value="font-sans">Sans</option>
+                    <option value="font-serif">Serif</option>
+                    <option value="font-mono">Mono</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm">Text Color</label>
+                <input id="textColor" type="color" class="w-full h-10 p-1 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm">Font Size (<span id="sizeValue">40</span>px)</label>
+                <input id="fontSize" type="range" min="20" max="100" value="40" class="w-full">
+            </div>
+            <div class="flex space-x-4">
+                <label class="flex items-center"><input id="boldToggle" type="checkbox" class="mr-2"> Bold</label>
+                <label class="flex items-center"><input id="italicToggle" type="checkbox" class="mr-2"> Italic</label>
+            </div>
+            <div>
+                <label class="block text-sm">Rotation (<span id="rotationValue">0</span>°)</label>
+                <input id="rotation" type="range" min="0" max="360" value="0" class="w-full">
+            </div>
+
+            <!-- Background Customization -->
+            <div>
+                <label class="block text-sm">Background Color</label>
+                <input id="bgColor" type="color" value="#e5e7eb" class="w-full h-10 p-1 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm">Add Shape</label>
+                <select id="shapeSelect" class="w-full p-2 border rounded">
+                    <option value="none">None</option>
+                    <option value="circle">Circle</option>
+                    <option value="square">Square</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Logo Preview -->
+        <div id="logoPreview" class="relative mt-6 p-6 bg-gray-200 rounded flex items-center justify-center h-64">
+            <div id="shape" class="absolute"></div>
+            <span id="textOutput" class="relative z-10"></span>
+        </div>
+
+        <!-- Download Button -->
+        <button id="downloadBtn" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Download Logo</button>
+    </div>
+
+    <script>
+        const logoText = document.getElementById('logoText');
+        const fontStyle = document.getElementById('fontStyle');
+        const boldToggle = document.getElementById('boldToggle');
+        const italicToggle = document.getElementById('italicToggle');
+        const textColor = document.getElementById('textColor');
+        const bgColor = document.getElementById('bgColor');
+        const fontSize = document.getElementById('fontSize');
+        const sizeValue = document.getElementById('sizeValue');
+        const rotation = document.getElementById('rotation');
+        const rotationValue = document.getElementById('rotationValue');
+        const shapeSelect = document.getElementById('shapeSelect');
+        const logoPreview = document.getElementById('logoPreview');
+        const textOutput = document.getElementById('textOutput');
+        const shape = document.getElementById('shape');
+        const downloadBtn = document.getElementById('downloadBtn');
+
+        function updateLogo() {
+            const text = logoText.value || "Your Logo";
+            const style = fontStyle.value;
+            const color = textColor.value;
+            const bg = bgColor.value;
+            const size = fontSize.value;
+            const rotate = rotation.value;
+            const shapeType = shapeSelect.value;
+
+            // Update text
+            textOutput.innerHTML = text;
+            textOutput.className = `relative z-10 ${style}`;
+            textOutput.style.color = color;
+            textOutput.style.fontSize = `${size}px`;
+            textOutput.style.fontWeight = boldToggle.checked ? 'bold' : 'normal';
+            textOutput.style.fontStyle = italicToggle.checked ? 'italic' : 'normal';
+            textOutput.style.transform = `rotate(${rotate}deg)`;
+
+            // Update background
+            logoPreview.style.backgroundColor = bg;
+
+            // Update shape
+            shape.className = 'absolute';
+            if (shapeType === 'circle') {
+                shape.style.width = '100px';
+                shape.style.height = '100px';
+                shape.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                shape.style.borderRadius = '50%';
+            } else if (shapeType === 'square') {
+                shape.style.width = '100px';
+                shape.style.height = '100px';
+                shape.style.backgroundColor = 'rgba(0, 0, 0, 0.2)';
+                shape.style.borderRadius = '0';
+            } else {
+                shape.style.width = '0';
+                shape.style.height = '0';
+            }
+
+            // Update display values
+            sizeValue.textContent = size;
+            rotationValue.textContent = rotate;
+        }
+
+        // Event listeners
+        [logoText, fontStyle, boldToggle, italicToggle, textColor, bgColor, fontSize, rotation, shapeSelect].forEach(input => {
+            input.addEventListener('input', updateLogo);
+        });
+
+        // Initial render
+        updateLogo();
+
+        // Download functionality
+        downloadBtn.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 300;
+            canvas.height = 300;
+
+            // Background
+            ctx.fillStyle = bgColor.value;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Shape
+            const shapeType = shapeSelect.value;
+            if (shapeType === 'circle' || shapeType === 'square') {
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                ctx.beginPath();
+                if (shapeType === 'circle') {
+                    ctx.arc(150, 150, 50, 0, Math.PI * 2);
+                } else {
+                    ctx.rect(100, 100, 100, 100);
+                }
+                ctx.fill();
+            }
+
+            // Text
+            ctx.font = `${boldToggle.checked ? 'bold ' : ''}${italicToggle.checked ? 'italic ' : ''}${fontSize.value}px ${fontStyle.value.split('-')[1]}`;
+            ctx.fillStyle = textColor.value;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.translate(150, 150);
+            ctx.rotate((rotation.value * Math.PI) / 180);
+            ctx.fillText(logoText.value || "Your Logo", 0, 0);
+
+            const link = document.createElement('a');
+            link.download = 'logo.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        });
+    </script>
+</body>
+</html>

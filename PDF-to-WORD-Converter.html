@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF to Word Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 mt-8 max-w-md bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">PDF to Word Converter</h1>
+        <form class="space-y-4">
+            <!-- File Input -->
+            <input type="file" id="pdf-input" accept=".pdf" class="block w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            
+            <!-- Convert Button -->
+            <button id="convert-button" type="button" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                Convert to Word
+            </button>
+        </form>
+
+        <!-- Status Message -->
+        <div id="status-message" class="mt-4 text-center text-gray-600 hidden">
+            <p>Processing your file...</p>
+            <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div id="output-container" class="mt-6 text-center hidden">
+            <h2 class="text-xl font-semibold mb-4">Conversion Complete</h2>
+            <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="mt-2">Your file has been converted successfully!</p>
+            </div>
+            <a id="download-link" class="inline-block bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                Download Word Document
+            </a>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden">
+            <p id="error-text"></p>
+        </div>
+    </div>
+
+    <script>
+        const pdfInput = document.getElementById('pdf-input');
+        const convertButton = document.getElementById('convert-button');
+        const outputContainer = document.getElementById('output-container');
+        const downloadLink = document.getElementById('download-link');
+        const statusMessage = document.getElementById('status-message');
+        const progressBar = document.getElementById('progress-bar');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+
+        convertButton.addEventListener('click', async () => {
+            const file = pdfInput.files[0];
+
+            if (!file) {
+                showError('Please select a PDF file.');
+                return;
+            }
+
+            // Show processing status
+            statusMessage.classList.remove('hidden');
+            outputContainer.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            // Simulate progress (in a real app, this would come from the conversion API)
+            simulateProgress();
+
+            try {
+                // In a real implementation, you would:
+                // 1. Upload the PDF to a server or API
+                // 2. Process the conversion on the server
+                // 3. Download the converted Word file
+                
+                // For demo purposes, we'll simulate this with a timeout
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // This would be the actual download link from the server
+                // For demo, we'll create a dummy link
+                const blob = new Blob(["This would be the Word file content"], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+                const url = URL.createObjectURL(blob);
+                
+                downloadLink.href = url;
+                downloadLink.download = file.name.replace('.pdf', '.docx');
+                
+                statusMessage.classList.add('hidden');
+                outputContainer.classList.remove('hidden');
+            } catch (error) {
+                showError('Conversion failed. Please try again.');
+                console.error('Conversion error:', error);
+            }
+        });
+
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 10;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 300);
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            statusMessage.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

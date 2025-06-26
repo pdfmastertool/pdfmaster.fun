@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Watermark Maker</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-2xl font-bold mb-4">PDF Watermark Maker</h1>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <input type="file" id="pdfInput" accept="application/pdf" class="mb-4">
+            <input type="text" id="watermarkText" placeholder="Enter watermark text" class="border p-2 rounded w-full mb-4">
+            <button onclick="addWatermark()" class="bg-blue-500 text-white p-2 rounded">Add Watermark and Download</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+async function addWatermark() {
+    const pdfInput = document.getElementById('pdfInput');
+    const watermarkText = document.getElementById('watermarkText').value;
+
+    if (!pdfInput.files[0] || !watermarkText) {
+        alert('Please upload a PDF and enter watermark text.');
+        return;
+    }
+
+    const file = pdfInput.files[0];
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+    const pages = pdfDoc.getPages();
+
+    pages.forEach(page => {
+        const { width, height } = page.getSize();
+        const fontSize = 50; // Increase font size for better visibility
+        const textWidth = watermarkText.length * (fontSize / 2); // Approximate text width
+        const angle = -45 * (Math.PI / 180); // Convert 45 degrees to radians (negative for diagonal slope)
+
+        // Calculate the center position for the watermark
+        const centerX = width / 2;
+        const centerY = height / 2;
+
+        // Draw the watermark diagonally
+        page.drawText(watermarkText, {
+            x: centerX - (textWidth / 2),
+            y: centerY,
+            size: fontSize,
+            color: PDFLib.rgb(1, 0, 0), // Red color
+            opacity: 0.5, // Adjust opacity for visibility
+            rotate: { type: 'degrees', angle: -45 }, // Rotate text diagonally
+        });
+    });
+
+    const pdfBytes = await pdfDoc.save();
+    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'watermarked.pdf';
+    link.click();
+}
+    </script>
+</body>
+</html>

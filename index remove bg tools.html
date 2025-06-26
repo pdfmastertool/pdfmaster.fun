@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools - pdfmaster</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="./src/output.css">
+  <style>
+    .tool-card {
+      transition: all 0.3s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tool-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    .tool-card-content {
+      flex-grow: 1;
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50">
+  <!-- Header -->
+  <header class='shadow-md font-sans tracking-wide relative z-50 bg-white'>
+    <nav>
+      <div
+        class='container mx-auto flex flex-wrap items-center justify-between gap-4 px-4 py-4 min-h-[70px] sm:px-6 lg:px-8'>
+        <a href="/"><img src="./images/logo.png" alt="logo" class='w-[40px]' /></a>
+
+        <div id="collapseMenu"
+          class='max-lg:hidden lg:!block max-lg:before:fixed max-lg:before:bg-black max-lg:before:opacity-50 max-lg:before:inset-0 max-lg:before:z-50'>
+          <button id="toggleClose"
+            class='lg:hidden fixed top-2 right-4 z-[100] rounded-full bg-white w-9 h-9 flex items-center justify-center border'>
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 fill-black" viewBox="0 0 320.591 320.591">
+              <path
+                d="M30.391 318.583a30.37 30.37 0 0 1-21.56-7.288c-11.774-11.844-11.774-30.973 0-42.817L266.643 10.665c12.246-11.459 31.462-10.822 42.921 1.424 10.362 11.074 10.966 28.095 1.414 39.875L51.647 311.295a30.366 30.366 0 0 1-21.256 7.288z"
+                data-original="#000000"></path>
+              <path
+                d="M287.9 318.583a30.37 30.37 0 0 1-21.257-8.806L8.83 51.963C-2.078 39.225-.595 20.055 12.143 9.146c11.369-9.736 28.136-9.736 39.504 0l259.331 257.813c12.243 11.462 12.876 30.679 1.414 42.922-.456.487-.927.958-1.414 1.414a30.368 30.368 0 0 1-23.078 7.288z"
+                data-original="#000000"></path>
+            </svg>
+          </button>
+
+          <ul
+            class='lg:flex lg:gap-x-5 max-lg:space-y-3 max-lg:fixed max-lg:bg-white max-lg:w-1/2 max-lg:min-w-[300px] max-lg:top-0 max-lg:left-0 max-lg:p-6 max-lg:h-full max-lg:shadow-md max-lg:overflow-auto z-50'>
+            <li class='mb-6 hidden max-lg:block'>
+              <a href="/"><img src="./images/logo.png" alt="logo" class='w-[40px]' /></a>
+            </li>
+            <li class='max-lg:border-b max-lg:py-3 px-3'>
+              <a href='pdfmaster.in/tools' class='hover:text-[#007bff] text-[#007bff] block font-bold text-[15px]'>Home</a>
+            </li>
+            <li class='max-lg:border-b max-lg:py-3 px-3'>
+              <a href='contactus.html' class='hover:text-[#007bff] text-[#333] block font-bold text-[15px]'>Contact
+                Us</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class='flex max-lg:ml-auto'>
+          <button id="toggleOpen" class='lg:hidden'>
+            <svg class="w-7 h-7" fill="#000" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <path fill-rule="evenodd"
+                d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                clip-rule="evenodd"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="bg-gray-900 py-12 px-4 text-center text-white">
+    <div class="container mx-auto max-w-4xl">
+      <h1 class="text-3xl font-bold sm:text-4xl md:text-5xl lg:text-6xl mb-4">
+        Premium Tools for Your Productivity
+      </h1>
+      <p class="text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto mb-6">
+        All our tools are 100% FREE and easy to use!
+      </p>
+      <button type="button" onclick="window.location.href='/'"
+        class="bg-white text-blue-600 hover:bg-blue-50 font-medium rounded-lg text-sm px-6 py-3 text-sm md:text-base">
+        Get Started
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+    <!-- PDF Tools Section -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center sm:text-3xl">PDF Conversion Tools</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- PDF to HTML -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF_to_HTML.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/html.png" alt="HTML Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO HTML</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDFs to HTML effortlessly, preserving text, images, and formatting.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to CSV -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF_to_CSV_Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/csv-file.png" alt="CSV Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO CSV</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF tables to CSV format for easy data analysis and manipulation.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Excel -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF_to_Excel.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/xls.png" alt="Excel Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO Excel</h3>
+            <p class="text-sm text-gray-600">
+              Transform PDF data into Excel spreadsheets with perfect formatting.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Zip -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-ZIP-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/zip.png" alt="ZIP Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO Zip</h3>
+            <p class="text-sm text-gray-600">
+              Compress and convert PDF files into ZIP archives for easy sharing.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to JPG -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Pdf-To-Jpg-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/Jpg.png" alt="JPG Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO JPG</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF pages to high-quality JPG images in seconds.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO Word</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO Json</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO PNG</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO WEBp</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO XMl</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">CSV To PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">JPG TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">JSON TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">XML TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div> <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/word.jpg" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">TEXT TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/png.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/pdf.png" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PNG TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/webp.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/pdf.png" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">WEBP To PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/pdf.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/tic-tac-toe.png" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">PDF TO Text</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/xls.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/pdf.png" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">EXCEL TO PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+        <!-- PDF to Word -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/PDF-to-WORD-Converter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <div class="flex items-center space-x-2 mb-4">
+              <img class="h-12" src="./images/html.png" alt="PDF Icon" />
+              <img class="h-4" src="https://cdn-icons-png.flaticon.com/512/32/32213.png" alt="Arrow Icon" />
+              <img class="h-12" src="./images/pdf.png" alt="Word Icon" />
+            </div>
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">HTML To PDF</h3>
+            <p class="text-sm text-gray-600">
+              Convert PDF documents to editable Word files with perfect layout.
+            </p>
+          </a>
+        </div>
+
+
+
+
+
+      </div>
+    </section>
+
+    <!-- More Tools Section -->
+    <section class="mb-16">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center sm:text-3xl">More Useful Tools</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Merge PDF -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Merge_PDF_Tool.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/pdf.png" alt="Merge PDF Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Merge PDF</h3>
+            <p class="text-sm text-gray-600">
+              Combine multiple PDF files into a single document quickly and easily.
+            </p>
+          </a>
+        </div>
+
+        <!-- Image Compressor -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Image_Compressor.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/imagecompress.webp" alt="Image Compressor Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Image Compressor</h3>
+            <p class="text-sm text-gray-600">
+              Reduce image file sizes without sacrificing quality.
+            </p>
+          </a>
+        </div>
+
+        <!-- QR Code Generator -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/qrcode.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/qr-code.png" alt="QR Code Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">QR Code Generator</h3>
+            <p class="text-sm text-gray-600">
+              Create custom QR codes for websites, contacts, and more.
+            </p>
+          </a>
+        </div>
+
+        <!-- Currency Converter -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="./cc/index.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/currency-exchange.png" alt="Currency Converter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Currency Converter</h3>
+            <p class="text-sm text-gray-600">
+              Convert between currencies with up-to-date exchange rates.
+            </p>
+          </a>
+        </div>
+
+        <!-- Password Generator -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/passwordgen.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/passwordgen.png" alt="Password Generator Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Password Generator</h3>
+            <p class="text-sm text-gray-600">
+              Create strong, secure passwords instantly.
+            </p>
+          </a>
+        </div>
+
+        <!-- BMI Calculator -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/bmical.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/bmi.png" alt="BMI Calculator Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">BMI Calculator</h3>
+            <p class="text-sm text-gray-600">
+              Calculate your Body Mass Index and health status.
+            </p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+
+        <section>
+          <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-8 text-center sm:text-3xl">All Our Image Tools</h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+             <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Image-Resizer.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/imageresizer.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Image Resizer Tool</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+                 <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/image100kb.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/image100kb.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Image compress less than 100KB</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+           <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/basicthumbnaildownload.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/texart.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Image Text Add</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+
+            </div>
+            </section>
+
+
+    <!-- All Tools Section -->
+    <section>
+      <h2 class="text-2xl font-bold text-gray-800 mt-10 mb-8 text-center sm:text-3xl">All Our Tools</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- I've included a few examples here - you would add all your remaining tools in the same pattern -->
+
+        <!-- JSON Formatter -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/jsonformeter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/file.png" alt="JSON Formatter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">JSON Formatter</h3>
+            <p class="text-sm text-gray-600">
+              Format and beautify your JSON data for better readability.
+            </p>
+          </a>
+        </div>
+
+        <!-- Lorem Ipsum Generator -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Lorem-Ipsum-Generator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/ipsome.png" alt="Lorem Ipsum Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Lorem Ipsum Generator</h3>
+            <p class="text-sm text-gray-600">
+              Generate placeholder text for your designs and mockups.
+            </p>
+          </a>
+        </div>
+
+        <!-- Word Counter -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/wc1.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/wordcounter1.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Word Counter</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+
+        <!-- Continue with all other tools in the same format -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/age.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/agecal.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Age Calculator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+   <!-- Remove Background Tool -->
+<div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+  <a href="/remove-bg.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+    <img class="h-16 mx-auto mb-4" src="./images/remove-bg-icon.png" alt="Remove Background Icon" />
+    <h3 class="text-lg font-semibold text-gray-800 mb-2">Remove Background</h3>
+    <p class="text-sm text-gray-600">
+      Instantly remove backgrounds from images with powerful AI tools.
+    </p>
+  </a>
+</div>
+
+
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/birdgame.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/birdgame.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">BIrd Game</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Caesar_Cipher_Encoder_&_Decoder.html"
+            class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/caesar-cipher-gcse-computer-science.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Caesar Cipher Encoder & Decoder</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/colorcode1.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/hexcode.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Hex Color Picker</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/compoundintrest.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/compound.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Compound Interest Calculator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/cssgreadient.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/cssgreadient.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> CSS Gradient Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/CSS_Gradient_Generator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/color.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Gradient Image Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/gstcalculator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/gst.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> GST Calculator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+       
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Image-Watermark-Adder.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/watermarkd.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Image Watermark Adder</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+
+
+       
+
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/logomaker.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/wordcounter.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Feature Text Creater</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/MD5HashGenerator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/md5.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> MD5 Hash Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Notes_App.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/notes.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Notes App</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+
+        
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/ytthumbnaildownload.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/thumbnaipre.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Thumbnail Previewer</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+        
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/unitconverter.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/unit.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Unit Converter</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/TicTacToe.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/tic-tac-toe.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Tic Tac Toe</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/SPEECH-TO-PDF.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/speechpdf.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> SPEECH TO PDF Converter</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/SipCalculater.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/sip.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Sip Calculator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+    
+
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/thumbnail1.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/youtube.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Thumbnails Downloader</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+
+      </div>
+    </section>
+    <section>
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center sm:text-3xl">All Our Seo Tools</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Extract-Meta-Tags.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/seoextract.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Extract Meta Tags</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+         <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/XML-Sitemap-Generator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/xmlsitemap.jpg" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> XML Sitemap Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+             <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/SEO-Analyzer.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/seo.avif" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> SEO Analyzer</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+        <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Robots.txt-Generator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/Robots.txtGenerator.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Robots.txt Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+         <!-- ... -->
+        <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Meta-Tag-Generator.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/meta.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Meta Tag Generator</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+         <!-- ... -->
+         <div class="tool-card bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <a href="/Keyword-Density-Analyzer.html" class="tool-card-content flex flex-col items-center p-6 text-center">
+            <img class="h-16 mx-auto mb-4" src="./images/keyword.png" alt="Word Counter Icon" />
+            <h3 class="text-lg font-semibold text-gray-800 mb-2"> Keyword Density Analyzer</h3>
+            <p class="text-sm text-gray-600">
+              Count words and characters in your text with precision.
+            </p>
+          </a>
+        </div>
+        <!-- ... -->
+      
+
+
+        </div>
+        </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <div class="mb-6 md:mb-0">
+          <a class="flex items-center">
+            <img src="./images/logo.png" alt="logo" class='w-[40px] mr-3' />
+            <span class="text-xl font-bold">pdfmaster Tools</span>
+          </a>
+          <p class="text-gray-400 mt-2 text-sm">
+            Premium tools for your productivity needs
+          </p>
+        </div>
+
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white transition">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+              viewBox="0 0 24 24">
+              <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+            </svg>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition">
+            <svg fill="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="w-5 h-5"
+              viewBox="0 0 24 24">
+              <path
+                d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z">
+              </path>
+            </svg>
+          </a>
+          <a href="#" class="text-gray-400 hover:text-white transition">
+            <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              class="w-5 h-5" viewBox="0 0 24 24">
+              <rect width="20" height="20" x="2" y="2" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zm1.5-4.87h.01"></path>
+            </svg>
+          </a>
+          <a href="https://www.whatsapp.com/channel/0029Va51swaKwqSRrwrG1K17"
+            class="text-gray-400 hover:text-white transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill='currentColor' viewBox="0 0 24 24">
+              <path
+                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335 .157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm mb-4 md:mb-0">
+          © 2025 pdfmaster Tools. All rights reserved. Design by <a href="https://pdfmaster.in/" target="_blank"
+            class="text-blue-400 hover:text-blue-300">pdfmaster</a>
+        </p>
+        <div class="flex space-x-6">
+          <a href="#" class="text-gray-400 hover:text-white text-sm">Privacy Policy</a>
+          <a href="#" class="text-gray-400 hover:text-white text-sm">Terms of Service</a>
+          <a href="contactus.html" class="text-gray-400 hover:text-white text-sm">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+
+  <!-- Popup Script (keep your existing popup script) -->
+  <script>
+    let step = 1;
+    let userEmail = "";
+    let userName = "";
+    let popupCount = localStorage.getItem("popupCount") || 0;
+    let lastReset = localStorage.getItem("lastReset") || Date.now();
+
+    function resetPopupCount() {
+      let now = Date.now();
+      if (now - lastReset > 12 * 60 * 60 * 1000) { // 12 hours reset
+        localStorage.setItem("popupCount", 0);
+        localStorage.setItem("lastReset", now);
+      }
+    }
+
+    function showPopup(delay) {
+      if (popupCount < 3) {
+        setTimeout(() => {
+          document.getElementById("popup").classList.remove("hidden");
+        }, delay);
+      }
+    }
+
+    resetPopupCount();
+    if (popupCount < 1) {
+      showPopup(10000); // First popup after 10 seconds
+    } else if (popupCount < 2) {
+      showPopup(180000); // Second popup after 3 minutes
+    } else if (popupCount < 3) {
+      showPopup(180000); // Third popup after another 3 minutes
+    }
+
+    function nextStep() {
+      let inputField = document.getElementById("popupInput");
+      let title = document.getElementById("popupTitle");
+
+      if (step === 1) {
+        if (inputField.value.trim() === "") {
+          alert("Please enter your email.");
+          return;
+        }
+        userEmail = inputField.value.trim();
+        step++;
+        title.textContent = "Enter Your Name";
+        inputField.value = "";
+        inputField.type = "text";
+        inputField.placeholder = "Enter Name";
+      } else {
+        if (inputField.value.trim() === "") {
+          alert("Please enter your name.");
+          return;
+        }
+        userName = inputField.value.trim();
+        document.getElementById("formEmail").value = userEmail;
+        document.getElementById("formName").value = userName;
+        document.getElementById("submissionForm").submit();
+        document.getElementById("popup").classList.add("hidden");
+        alert("Form submitted successfully!");
+      }
+    }
+
+    function closePopup() {
+      document.getElementById("popup").classList.add("hidden");
+      popupCount++;
+      localStorage.setItem("popupCount", popupCount);
+      if (popupCount < 3) {
+        showPopup(180000); // Re-show after 3 minutes
+      }
+    }
+  </script>
+</body>
+
+</html>

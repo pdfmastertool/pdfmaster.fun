@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Extract meta tags from any website URL with Emprux. Get title, description, keywords, and more instantly.">
+  <meta name="keywords" content="meta tag extractor, extract meta tags, website meta tags, SEO meta tags, online meta tag tool">
+  <meta name="author" content="Emprux">
+  <meta property="og:title" content="Extract Meta Tags - Emprux">
+  <meta property="og:description" content="Extract meta tags from any website URL with our free online tool. Get title, description, keywords, and more instantly.">
+  <meta property="og:image" content="./images/meta-tag-extractor.png">
+  <meta property="og:url" content="https://Emprux.com/extract-meta-tags">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="canonical" href="https://Emprux.com/extract-meta-tags">
+  <title>Extract Meta Tags - Free Online Tool | Emprux</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./src/output.css">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-indigo-600 mb-4">Extract Meta Tags</h1>
+    <p class="text-gray-600 mb-6">Enter a website URL to extract its meta tags, including title, description, keywords, and more.</p>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <div class="mb-4">
+        <label for="url" class="block text-gray-700 font-medium mb-2">Website URL</label>
+        <input type="text" id="url" placeholder="https://example.com" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button onclick="extractMetaTags()" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-500 transition duration-300 flex items-center justify-center">
+        <span id="buttonText">Extract Meta Tags</span>
+        <span id="loadingSpinner" class="ml-2 hidden"><i class="fas fa-spinner fa-spin"></i></span>
+      </button>
+    </div>
+    <div id="result" class="mt-6 bg-white p-6 rounded-lg shadow-md hidden">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold text-indigo-600">Extracted Meta Tags</h2>
+        <button onclick="copyToClipboard()" class="bg-blue-500 text-indigo-600 px-4 py-2 rounded-lg hover:bg-blue-500 transition duration-300">
+          <i class="fas fa-copy mr-2"></i>Copy
+        </button>
+      </div>
+      <pre id="metaTagsOutput" class="bg-blue-500 p-4 rounded-lg text-gray-800 overflow-x-auto"></pre>
+    </div>
+  </div>
+  <script>
+    async function extractMetaTags() {
+      const url = document.getElementById('url').value;
+      if (!url) {
+        alert('Please enter a valid URL.');
+        return;
+      }
+      try {
+        document.getElementById('buttonText').textContent = 'Extracting...';
+        document.getElementById('loadingSpinner').classList.remove('hidden');
+
+        const proxyUrl = 'https://api.allorigins.win/raw?url=';
+        const response = await fetch(proxyUrl + encodeURIComponent(url));
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+
+        const metaTags = {};
+        doc.querySelectorAll('meta').forEach((tag) => {
+          const name = tag.getAttribute('name') || tag.getAttribute('property');
+          const content = tag.getAttribute('content');
+          if (name && content) {
+            metaTags[name] = content;
+          }
+        });
+
+        const result = {
+          title: doc.querySelector('title')?.textContent || '',
+          ...metaTags,
+        };
+
+        document.getElementById('metaTagsOutput').textContent = JSON.stringify(result, null, 2);
+        document.getElementById('result').classList.remove('hidden');
+      } catch (error) {
+        console.error('Error extracting meta tags:', error);
+        alert('Failed to extract meta tags. Please try again.');
+      } finally {
+        document.getElementById('buttonText').textContent = 'Extract Meta Tags';
+        document.getElementById('loadingSpinner').classList.add('hidden');
+      }
+    }
+
+    function copyToClipboard() {
+      const output = document.getElementById('metaTagsOutput').textContent;
+      navigator.clipboard.writeText(output).then(() => {
+        alert('Copied to clipboard!');
+      }).catch((error) => {
+        console.error('Failed to copy:', error);
+        alert('Failed to copy to clipboard.');
+      });
+    }
+  </script>
+</body>
+</html>

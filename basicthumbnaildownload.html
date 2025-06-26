@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Thumbnail Previewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+        }
+        .thumbnail-text {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-8 text-red-600">YouTube Thumbnail Previewer</h1>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Preview Section -->
+            <div class="bg-white rounded-xl shadow-lg p-4">
+                <h2 class="text-xl font-semibold mb-4">Thumbnail Preview</h2>
+                <div id="thumbnail" class="thumbnail-container mb-4">
+                    <div id="thumbnailText" class="thumbnail-text text-2xl font-bold"></div>
+                </div>
+                <div class="flex justify-between">
+                    <button id="downloadBtn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg">
+                        Download Thumbnail
+                    </button>
+                    <button id="randomBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg">
+                        Random Example
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Controls Section -->
+            <div class="bg-white rounded-xl shadow-lg p-4">
+                <h2 class="text-xl font-semibold mb-4">Customize Thumbnail</h2>
+                
+                <div class="space-y-4">
+                    <!-- Background Image -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Background Image</label>
+                        <div class="flex gap-2">
+                            <input type="file" id="bgImageUpload" accept="image/*" class="hidden">
+                            <button id="uploadBtn" class="bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-lg flex-1">
+                                Upload Image
+                            </button>
+                            <select id="presetBg" class="border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                                <option value="">Preset Backgrounds</option>
+                                <option value="https://images.unsplash.com/photo-1574717024453-3545e7cc2e1e">Tech</option>
+                                <option value="https://images.unsplash.com/photo-1542831371-29b0f74f9713">Coding</option>
+                                <option value="https://images.unsplash.com/photo-1499750310107-5fef28a66643">Nature</option>
+                                <option value="https://images.unsplash.com/photo-1498050108023-c5249f4df085">Workspace</option>
+                                <option value="https://images.unsplash.com/photo-1518770660439-4636190af475">Electronics</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Title Text -->
+                    <div>
+                        <label for="titleText" class="block text-sm font-medium text-gray-700 mb-1">Title Text</label>
+                        <input type="text" id="titleText" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Enter your video title">
+                    </div>
+                    
+                    <!-- Text Color -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Text Color</label>
+                        <div class="flex gap-2">
+                            <input type="color" id="textColor" value="#ffffff" class="w-12 h-12 cursor-pointer">
+                            <select id="textColorPreset" class="border border-gray-300 rounded-lg px-3 py-2 flex-1">
+                                <option value="#ffffff">White</option>
+                                <option value="#ff0000">Red</option>
+                                <option value="#00ff00">Green</option>
+                                <option value="#0000ff">Blue</option>
+                                <option value="#ffff00">Yellow</option>
+                                <option value="#ff00ff">Pink</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Text Size -->
+                    <div>
+                        <label for="textSize" class="block text-sm font-medium text-gray-700 mb-1">Text Size</label>
+                        <select id="textSize" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="text-xl">Small</option>
+                            <option value="text-2xl" selected>Medium</option>
+                            <option value="text-3xl">Large</option>
+                            <option value="text-4xl">Extra Large</option>
+                            <option value="text-5xl">Huge</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Text Position -->
+                    <div>
+                        <label for="textPosition" class="block text-sm font-medium text-gray-700 mb-1">Text Position</label>
+                        <select id="textPosition" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="bottom">Bottom</option>
+                            <option value="middle">Middle</option>
+                            <option value="top">Top</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Text Background -->
+                    <div>
+                        <label for="textBg" class="block text-sm font-medium text-gray-700 mb-1">Text Background</label>
+                        <select id="textBg" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+                            <option value="gradient">Gradient (Default)</option>
+                            <option value="solid">Solid Black</option>
+                            <option value="none">None</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const thumbnail = document.getElementById('thumbnail');
+            const thumbnailText = document.getElementById('thumbnailText');
+            const titleText = document.getElementById('titleText');
+            const textColor = document.getElementById('textColor');
+            const textColorPreset = document.getElementById('textColorPreset');
+            const textSize = document.getElementById('textSize');
+            const textPosition = document.getElementById('textPosition');
+            const textBg = document.getElementById('textBg');
+            const bgImageUpload = document.getElementById('bgImageUpload');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const presetBg = document.getElementById('presetBg');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const randomBtn = document.getElementById('randomBtn');
+            
+            // Default thumbnail
+            thumbnail.style.backgroundImage = 'url(https://images.unsplash.com/photo-1574717024453-3545e7cc2e1e)';
+            thumbnailText.textContent = 'How to Create Amazing YouTube Thumbnails';
+            
+            // Update thumbnail when any control changes
+            [titleText, textColor, textColorPreset, textSize, textPosition, textBg].forEach(element => {
+                element.addEventListener('input', updateThumbnail);
+                element.addEventListener('change', updateThumbnail);
+            });
+            
+            // Upload image
+            uploadBtn.addEventListener('click', () => bgImageUpload.click());
+            bgImageUpload.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        thumbnail.style.backgroundImage = `url(${event.target.result})`;
+                        updateThumbnail();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Preset background
+            presetBg.addEventListener('change', function() {
+                if (this.value) {
+                    thumbnail.style.backgroundImage = `url(${this.value})`;
+                    updateThumbnail();
+                }
+            });
+            
+            // Color picker and preset sync
+            textColor.addEventListener('input', function() {
+                textColorPreset.value = this.value;
+                updateThumbnail();
+            });
+            
+            textColorPreset.addEventListener('change', function() {
+                textColor.value = this.value;
+                updateThumbnail();
+            });
+            
+            // Download button
+            downloadBtn.addEventListener('click', downloadThumbnail);
+            
+            // Random example button
+            randomBtn.addEventListener('click', generateRandomExample);
+            
+            // Update the thumbnail preview
+            function updateThumbnail() {
+                // Update text
+                thumbnailText.textContent = titleText.value || 'Your Video Title Here';
+                
+                // Update text color
+                thumbnailText.style.color = textColor.value;
+                
+                // Update text size
+                thumbnailText.className = 'thumbnail-text font-bold';
+                thumbnailText.classList.add(textSize.value);
+                
+                // Update text position
+                thumbnailText.style.bottom = '';
+                thumbnailText.style.top = '';
+                if (textPosition.value === 'middle') {
+                    thumbnailText.style.bottom = '50%';
+                    thumbnailText.style.transform = 'translateY(50%)';
+                } else if (textPosition.value === 'top') {
+                    thumbnailText.style.top = '0';
+                    thumbnailText.style.bottom = 'auto';
+                    thumbnailText.style.transform = 'none';
+                } else {
+                    thumbnailText.style.bottom = '0';
+                    thumbnailText.style.transform = 'none';
+                }
+                
+                // Update text background
+                thumbnailText.style.background = 'none';
+                if (textBg.value === 'gradient') {
+                    thumbnailText.style.background = 'linear-gradient(to top, rgba(0,0,0,0.8), transparent';
+                } else if (textBg.value === 'solid') {
+                    thumbnailText.style.background = 'rgba(0,0,0,0.7)';
+                }
+            }
+            
+            // Download thumbnail as image
+            function downloadThumbnail() {
+                // Create a canvas element
+                const canvas = document.createElement('canvas');
+                canvas.width = thumbnail.offsetWidth;
+                canvas.height = thumbnail.offsetHeight;
+                const ctx = canvas.getContext('2d');
+                
+                // Get the background image
+                const bgImg = new Image();
+                bgImg.crossOrigin = 'Anonymous';
+                bgImg.src = thumbnail.style.backgroundImage.slice(4, -1).replace(/"/g, '');
+                
+                bgImg.onload = function() {
+                    // Draw the background
+                    ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                    
+                    // Draw the text background if needed
+                    if (textBg.value !== 'none') {
+                        const textBgHeight = thumbnailText.offsetHeight;
+                        const textBgY = textPosition.value === 'top' ? 0 : 
+                                       textPosition.value === 'middle' ? (canvas.height - textBgHeight) / 2 :
+                                       canvas.height - textBgHeight;
+                        
+                        if (textBg.value === 'gradient') {
+                            const gradient = ctx.createLinearGradient(0, textBgY + textBgHeight, 0, textBgY);
+                            gradient.addColorStop(0, 'rgba(0,0,0,0.8)');
+                            gradient.addColorStop(1, 'transparent');
+                            ctx.fillStyle = gradient;
+                            ctx.fillRect(0, textBgY, canvas.width, textBgHeight);
+                        } else if (textBg.value === 'solid') {
+                            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+                            ctx.fillRect(0, textBgY, canvas.width, textBgHeight);
+                        }
+                    }
+                    
+                    // Draw the text
+                    ctx.fillStyle = textColor.value;
+                    ctx.font = getCanvasFont();
+                    ctx.textAlign = 'center';
+                    
+                    const textX = canvas.width / 2;
+                    let textY;
+                    
+                    if (textPosition.value === 'top') {
+                        textY = 40; // Padding from top
+                    } else if (textPosition.value === 'middle') {
+                        textY = canvas.height / 2 + 15; // Center
+                    } else {
+                        textY = canvas.height - 30; // Padding from bottom
+                    }
+                    
+                    // Wrap text function
+                    wrapText(ctx, titleText.value || 'Your Video Title Here', textX, textY, canvas.width - 40, 40);
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = 'youtube-thumbnail.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+            }
+            
+            // Helper function to get canvas font style
+            function getCanvasFont() {
+                let size;
+                switch(textSize.value) {
+                    case 'text-xl': size = '20px'; break;
+                    case 'text-2xl': size = '24px'; break;
+                    case 'text-3xl': size = '30px'; break;
+                    case 'text-4xl': size = '36px'; break;
+                    case 'text-5xl': size = '48px'; break;
+                    default: size = '24px';
+                }
+                return `bold ${size} Arial`;
+            }
+            
+            // Helper function to wrap text
+            function wrapText(context, text, x, y, maxWidth, lineHeight) {
+                const words = text.split(' ');
+                let line = '';
+                let lines = [];
+                
+                for (let n = 0; n < words.length; n++) {
+                    const testLine = line + words[n] + ' ';
+                    const metrics = context.measureText(testLine);
+                    const testWidth = metrics.width;
+                    
+                    if (testWidth > maxWidth && n > 0) {
+                        lines.push(line);
+                        line = words[n] + ' ';
+                    } else {
+                        line = testLine;
+                    }
+                }
+                lines.push(line);
+                
+                for (let i = 0; i < lines.length; i++) {
+                    context.fillText(lines[i].trim(), x, y + (i * lineHeight));
+                }
+            }
+            
+            // Generate random example
+            function generateRandomExample() {
+                // Random backgrounds from Unsplash
+                const backgrounds = [
+                    'https://images.unsplash.com/photo-1574717024453-3545e7cc2e1e',
+                    'https://images.unsplash.com/photo-1542831371-29b0f74f9713',
+                    'https://images.unsplash.com/photo-1499750310107-5fef28a66643',
+                    'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+                    'https://images.unsplash.com/photo-1518770660439-4636190af475',
+                    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b',
+                    'https://images.unsplash.com/photo-1517694712202-14dd9538aa97'
+                ];
+                
+                // Random titles
+                const titles = [
+                    '10 Secrets to Amazing Thumbnails',
+                    'How I Gained 100K Subscribers',
+                    'The Ultimate Guide to YouTube Success',
+                    'You Won\'t Believe What Happened Next!',
+                    '5 Tips for Better Videos',
+                    'This Changed Everything!',
+                    'The Truth About YouTube Algorithm'
+                ];
+                
+                // Random colors
+                const colors = ['#ffffff', '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff'];
+                
+                // Apply random settings
+                thumbnail.style.backgroundImage = `url(${backgrounds[Math.floor(Math.random() * backgrounds.length)]})`;
+                titleText.value = titles[Math.floor(Math.random() * titles.length)];
+                textColor.value = colors[Math.floor(Math.random() * colors.length)];
+                textColorPreset.value = textColor.value;
+                textSize.value = ['text-xl', 'text-2xl', 'text-3xl', 'text-4xl', 'text-5xl'][Math.floor(Math.random() * 5)];
+                textPosition.value = ['bottom', 'middle', 'top'][Math.floor(Math.random() * 3)];
+                textBg.value = ['gradient', 'solid', 'none'][Math.floor(Math.random() * 3)];
+                
+                updateThumbnail();
+            }
+        });
+    </script>
+</body>
+</html>

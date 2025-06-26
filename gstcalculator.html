@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GST Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+        <h2 class="text-xl font-semibold text-center mb-4">GST Calculator</h2>
+        
+        <label class="block mb-2">Enter Amount:</label>
+        <input type="number" id="amount" class="w-full p-2 border rounded mb-4" placeholder="Enter amount" />
+
+        <label class="block mb-2">Select GST Rate:</label>
+        <select id="gstRate" class="w-full p-2 border rounded mb-4">
+            <option value="5">5%</option>
+            <option value="12">12%</option>
+            <option value="18">18%</option>
+            <option value="28">28%</option>
+            <option value="custom">Set Own Value</option>
+        </select>
+
+        <input type="number" id="customRate" class="w-full p-2 border rounded mb-4 hidden" placeholder="Enter custom GST %" />
+
+        <label class="block mb-2">Calculation Type:</label>
+        <div class="flex space-x-4 mb-4">
+            <button class="p-2 bg-blue-500 text-white rounded w-1/2" onclick="calculateGST('exclusive')">Exclusive</button>
+            <button class="p-2 bg-green-500 text-white rounded w-1/2" onclick="calculateGST('inclusive')">Inclusive</button>
+        </div>
+        
+        <h3 class="text-lg font-semibold">Results:</h3>
+        <p>GST Amount: <span id="gstAmount">0.00</span></p>
+        <p>Total Amount: <span id="totalAmount">0.00</span></p>
+    </div>
+    
+    <script>
+        document.getElementById('gstRate').addEventListener('change', function() {
+            if (this.value === 'custom') {
+                document.getElementById('customRate').classList.remove('hidden');
+            } else {
+                document.getElementById('customRate').classList.add('hidden');
+            }
+        });
+
+        function calculateGST(type) {
+            let amount = parseFloat(document.getElementById('amount').value) || 0;
+            let gstRate = document.getElementById('gstRate').value;
+            if (gstRate === 'custom') {
+                gstRate = parseFloat(document.getElementById('customRate').value) || 0;
+            } else {
+                gstRate = parseFloat(gstRate);
+            }
+            
+            let gstAmount = (amount * gstRate) / 100;
+            let totalAmount = type === 'exclusive' ? amount + gstAmount : amount / (1 + gstRate / 100);
+            
+            document.getElementById('gstAmount').innerText = gstAmount.toFixed(2);
+            document.getElementById('totalAmount').innerText = totalAmount.toFixed(2);
+        }
+    </script>
+</body>
+</html>

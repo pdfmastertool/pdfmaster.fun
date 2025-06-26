@@ -1,0 +1,853 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="author" content="Emprux">
+    <meta name="robots" content="index, follow">
+    <meta name="description" content="Create an XML sitemap for your website to improve search engine indexing. Our free tool helps you generate compliant sitemaps for better SEO.">
+    <meta name="keywords" content="XML sitemap generator, SEO sitemap, website indexing, Google sitemap, search engine optimization">
+    
+    <!-- Favicon -->
+    
+    <!-- Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="./src/output.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "XML Sitemap Generator",
+      "url": "https://Emprux.com/XML_Sitemap_Generator.html",
+      "description": "A free online tool to create XML sitemaps for better search engine indexing.",
+      "applicationCategory": "SEOApplication",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "operatingSystem": "Any",
+      "author": {
+        "@type": "Organization",
+        "name": "Emprux"
+      }
+    }
+    </script>
+</head>
+
+<body class="bg-gray-50 font-sans text-gray-800">
+    <!-- Header -->
+    
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-500 mb-3">XML Sitemap Generator</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">Create an XML sitemap for your website to improve search engine indexing and visibility. Generate a standards-compliant sitemap file that can be submitted to search engines.</p>
+        </div>
+
+        <!-- Step-by-Step Workflow -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <!-- Steps Header -->
+                <div class="bg-blue-500 p-4">
+                    <h2 class="text-xl font-bold text-white text-center">How To Use</h2>
+                </div>
+
+                <!-- Steps -->
+                <div class="p-6">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <!-- Step 1 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">1</div>
+                                <h3 class="font-semibold text-lg">Enter Website URL</h3>
+                            </div>
+                            <p class="text-gray-600">Input your website's main URL with the correct protocol (http/https).</p>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">2</div>
+                                <h3 class="font-semibold text-lg">Add Page URLs</h3>
+                            </div>
+                            <p class="text-gray-600">Add all pages you want to include in your sitemap or enter them one by one.</p>
+                        </div>
+
+                        <!-- Step 3 -->
+                        <div class="flex-1 border border-gray-200 rounded-lg p-4 bg-gray-50">
+                            <div class="flex items-center mb-3">
+                                <div class="bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold mr-3">3</div>
+                                <h3 class="font-semibold text-lg">Download XML</h3>
+                            </div>
+                            <p class="text-gray-600">Generate and download your XML sitemap file ready for submission to search engines.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sitemap Generator Tool -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <div class="flex justify-center mb-6 text-blue-500 text-5xl">
+                    <i class="fas fa-sitemap"></i>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="website-url" class="block text-sm font-medium text-gray-700 mb-1">Website URL</label>
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <input type="text" 
+                               id="website-url" 
+                               class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="https://example.com" />
+                        <button id="extract-urls" 
+                                class="px-4 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                            <i class="fas fa-spider mr-2"></i> Crawl Website
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-1">We'll actively crawl your website to discover pages (limited to 50 URLs for performance).</p>
+                </div>
+                
+                <div id="crawler-status" class="mb-6 hidden">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="flex items-center mb-2">
+                            <div id="crawl-spinner" class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                            <h3 class="text-blue-700 font-medium" id="crawl-status-text">Crawling website...</h3>
+                        </div>
+                        <div id="crawl-progress" class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                            <div id="crawl-progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+                        </div>
+                        <p class="text-sm text-gray-600" id="crawl-details">Initializing crawler...</p>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-1">
+                        <label for="page-urls" class="block text-sm font-medium text-gray-700">Page URLs</label>
+                        <div class="flex items-center">
+                            <button id="add-url" class="text-blue-500 text-sm hover:text-blue-700 flex items-center mr-3">
+                                <i class="fas fa-plus-circle mr-1"></i> Add URL
+                            </button>
+                            <button id="clear-urls" class="text-red-500 text-sm hover:text-red-700 flex items-center">
+                                <i class="fas fa-trash-alt mr-1"></i> Clear All
+                            </button>
+                        </div>
+                    </div>
+                    <div id="url-list" class="border border-gray-300 rounded-lg p-3 max-h-60 overflow-y-auto mb-2">
+                        <div class="text-gray-400 text-center p-4" id="empty-state">
+                            No URLs added yet. Click "Crawl Website" or "Add URL" to begin.
+                        </div>
+                        <!-- URLs will be added here dynamically -->
+                    </div>
+                    <div class="flex gap-2 hidden" id="add-url-form">
+                        <input type="text" 
+                               id="new-url" 
+                               class="flex-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="https://example.com/page" />
+                        <button id="save-url" 
+                                class="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition duration-300">
+                            Add
+                        </button>
+                        <button id="cancel-url" 
+                                class="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-300">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-md font-medium text-gray-700 mb-2">Sitemap Settings</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="change-freq" class="block text-sm font-medium text-gray-700 mb-1">Change Frequency</label>
+                            <select id="change-freq" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="always">Always</option>
+                                <option value="hourly">Hourly</option>
+                                <option value="daily" selected>Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="yearly">Yearly</option>
+                                <option value="never">Never</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="priority" class="block text-sm font-medium text-gray-700 mb-1">Default Priority</label>
+                            <select id="priority" class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                                <option value="1.0">1.0 (Highest)</option>
+                                <option value="0.9">0.9</option>
+                                <option value="0.8" selected>0.8</option>
+                                <option value="0.7">0.7</option>
+                                <option value="0.6">0.6</option>
+                                <option value="0.5">0.5 (Medium)</option>
+                                <option value="0.4">0.4</option>
+                                <option value="0.3">0.3</option>
+                                <option value="0.2">0.2</option>
+                                <option value="0.1">0.1 (Lowest)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="generate-button" 
+                            class="flex-1 bg-blue-500 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex justify-center items-center font-medium">
+                        <i class="fas fa-file-code mr-2"></i> Generate XML Sitemap
+                    </button>
+                    <button id="analyze-button" 
+                            class="flex-1 bg-indigo-500 text-white py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 flex justify-center items-center font-medium">
+                        <i class="fas fa-search mr-2"></i> Analyze Sitemap
+                    </button>
+                </div>
+                
+                <div id="results-container" class="mt-8 hidden">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Generated XML Sitemap</h2>
+                    
+                    <div class="mb-4">
+                        <pre id="xml-output" class="bg-gray-100 p-4 rounded-lg overflow-x-auto text-sm text-gray-800"></pre>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <button id="download-button" 
+                                class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300 flex justify-center items-center">
+                            <i class="fas fa-download mr-2"></i> Download XML File
+                        </button>
+                        <button id="copy-button" 
+                                class="flex-1 bg-gray-700 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition duration-300 flex justify-center items-center">
+                            <i class="fas fa-copy mr-2"></i> Copy to Clipboard
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-lg text-gray-800">
+                        <h3 class="font-bold text-blue-500 mb-2">Next Steps</h3>
+                        <ol class="text-sm list-decimal pl-5 space-y-2">
+                            <li>Save the XML file to your website's root directory as <code class="bg-gray-200 px-1">sitemap.xml</code></li>
+                            <li>Verify the sitemap URL works by accessing it in a browser</li>
+                            <li>Submit your sitemap to search engines:
+                                <ul class="list-disc pl-5 mt-1">
+                                    <li><a href="https://search.google.com/search-console" target="_blank" class="text-blue-500 hover:underline">Google Search Console</a></li>
+                                    <li><a href="https://www.bing.com/webmasters/home" target="_blank" class="text-blue-500 hover:underline">Bing Webmaster Tools</a></li>
+                                </ul>
+                            </li>
+                            <li>Add the sitemap location to your <code class="bg-gray-200 px-1">robots.txt</code> file: <code class="bg-gray-200 px-1">Sitemap: https://example.com/sitemap.xml</code></li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <div id="analysis-container" class="mt-8 hidden">
+                    <h2 class="text-xl font-bold mb-4 text-gray-800">Sitemap Analysis</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-blue-700 mb-2">Total URLs</h3>
+                            <p id="total-urls" class="text-3xl font-bold">0</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-green-700 mb-2">Sitemap Size</h3>
+                            <p id="sitemap-size" class="text-3xl font-bold">0 KB</p>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-indigo-700 mb-2">URL Depth</h3>
+                            <p id="url-depth" class="text-3xl font-bold">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                        <h3 class="text-lg font-medium mb-3">URL Analysis</h3>
+                        <div id="url-analysis">
+                            <!-- Analysis will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-lg p-4">
+                        <h3 class="text-lg font-medium mb-3">Recommendations</h3>
+                        <ul id="sitemap-recommendations" class="list-disc pl-5 space-y-2 text-gray-700">
+                            <!-- Recommendations will be inserted here -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <h2 class="text-2xl font-bold text-blue-500 mb-6 text-center">Why Use a Sitemap?</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- Benefit 1 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-search text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Better Indexing</h3>
+                    <p class="text-gray-600">Help search engines discover and index all the important pages on your website more efficiently.</p>
+                </div>
+                
+                <!-- Benefit 2 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-tachometer-alt text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Faster Crawling</h3>
+                    <p class="text-gray-600">Speeds up the discovery of new and updated content on your site by search engine bots.</p>
+                </div>
+                
+                <!-- Benefit 3 -->
+                <div class="bg-white p-5 rounded-lg shadow text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">Higher Rankings</h3>
+                    <p class="text-gray-600">Proper sitemaps can contribute to better search rankings by ensuring all content is indexed properly.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>© 2023 Emprux. All rights reserved.</p>
+                <div class="mt-4">
+                    <a href="privacy_policy.html" class="text-gray-300 hover:text-white mx-2">Privacy Policy</a>
+                    <a href="terms_of_service.html" class="text-gray-300 hover:text-white mx-2">Terms of Service</a>
+                    <a href="disclaimer.html" class="text-gray-300 hover:text-white mx-2">Disclaimer</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // URL List Management
+        const urlList = [];
+        
+        document.getElementById("add-url").addEventListener("click", function() {
+            document.getElementById("add-url-form").classList.remove("hidden");
+        });
+        
+        document.getElementById("cancel-url").addEventListener("click", function() {
+            document.getElementById("add-url-form").classList.add("hidden");
+            document.getElementById("new-url").value = "";
+        });
+        
+        document.getElementById("save-url").addEventListener("click", function() {
+            const newUrl = document.getElementById("new-url").value.trim();
+            if (!newUrl) {
+                alert("Please enter a valid URL");
+                return;
+            }
+            
+            addUrlToList(newUrl);
+            document.getElementById("new-url").value = "";
+            document.getElementById("add-url-form").classList.add("hidden");
+        });
+        
+        document.getElementById("clear-urls").addEventListener("click", function() {
+            if (urlList.length > 0) {
+                if (confirm("Are you sure you want to clear all URLs?")) {
+                    urlList.length = 0;
+                    updateUrlListDisplay();
+                }
+            }
+        });
+        
+        function addUrlToList(url) {
+            if (urlList.includes(url)) {
+                alert("This URL is already in the list");
+                return;
+            }
+            
+            urlList.push(url);
+            updateUrlListDisplay();
+        }
+        
+        function removeUrlFromList(url) {
+            const index = urlList.indexOf(url);
+            if (index > -1) {
+                urlList.splice(index, 1);
+                updateUrlListDisplay();
+            }
+        }
+        
+        function updateUrlListDisplay() {
+            const urlListElement = document.getElementById("url-list");
+            const emptyState = document.getElementById("empty-state");
+            
+            if (urlList.length === 0) {
+                emptyState.classList.remove("hidden");
+                urlListElement.innerHTML = "";
+                urlListElement.appendChild(emptyState);
+                return;
+            }
+            
+            emptyState.classList.add("hidden");
+            urlListElement.innerHTML = "";
+            
+            urlList.forEach(url => {
+                const urlItem = document.createElement("div");
+                urlItem.className = "flex justify-between items-center py-2 px-3 hover:bg-gray-50 border-b border-gray-100 last:border-0";
+                
+                const urlText = document.createElement("div");
+                urlText.className = "text-gray-800 text-sm truncate flex-1";
+                urlText.textContent = url;
+                
+                const removeButton = document.createElement("button");
+                removeButton.className = "text-red-500 hover:text-red-700 ml-2";
+                removeButton.innerHTML = '<i class="fas fa-times"></i>';
+                removeButton.onclick = function() {
+                    removeUrlFromList(url);
+                };
+                
+                urlItem.appendChild(urlText);
+                urlItem.appendChild(removeButton);
+                urlListElement.appendChild(urlItem);
+            });
+        }
+        
+        // Website Crawler Functionality
+        document.getElementById("extract-urls").addEventListener("click", startCrawl);
+        
+        async function startCrawl() {
+            const websiteUrl = document.getElementById("website-url").value.trim();
+            if (!websiteUrl) {
+                alert("Please enter the website URL first");
+                return;
+            }
+            
+            if (!isValidUrl(websiteUrl)) {
+                alert("Please enter a valid URL including http:// or https://");
+                return;
+            }
+            
+            // Show crawler status UI
+            document.getElementById("crawler-status").classList.remove("hidden");
+            document.getElementById("crawl-status-text").textContent = "Crawling website...";
+            document.getElementById("crawl-details").textContent = "Connecting to website...";
+            document.getElementById("crawl-progress-bar").style.width = "5%";
+            
+            // Disable the crawl button
+            const crawlButton = document.getElementById("extract-urls");
+            crawlButton.disabled = true;
+            crawlButton.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Crawling...';
+            
+            try {
+                // Normalize base URL
+                let baseUrl = websiteUrl;
+                if (baseUrl.endsWith("/")) {
+                    baseUrl = baseUrl.slice(0, -1);
+                }
+                
+                // Extract domain for same-origin check
+                const domain = new URL(baseUrl).hostname;
+                
+                // Clear existing URLs if user wants to
+                if (urlList.length > 0) {
+                    if (confirm("Do you want to clear existing URLs before crawling?")) {
+                        urlList.length = 0;
+                    }
+                }
+                
+                // Add base URL first
+                if (!urlList.includes(baseUrl)) {
+                    addUrlToList(baseUrl);
+                }
+                
+                // Queue for BFS crawling
+                const urlQueue = [baseUrl];
+                const discoveredUrls = new Set([baseUrl]);
+                const MAX_URLS = 50; // Limit to 50 URLs for performance
+                
+                document.getElementById("crawl-details").textContent = `Discovered: 1 pages (limit: ${MAX_URLS})`;
+                
+                // Start crawling
+                let processedCount = 0;
+                
+                while (urlQueue.length > 0 && discoveredUrls.size < MAX_URLS) {
+                    const currentUrl = urlQueue.shift();
+                    processedCount++;
+                    
+                    // Update UI
+                    const progressPercent = Math.min(95, (processedCount / MAX_URLS) * 100);
+                    document.getElementById("crawl-progress-bar").style.width = `${progressPercent}%`;
+                    document.getElementById("crawl-details").textContent = `Discovered: ${discoveredUrls.size} pages (limit: ${MAX_URLS})`;
+                    
+                    try {
+                        // Use a proxy service to avoid CORS issues
+                        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(currentUrl)}`;
+                        const response = await fetch(proxyUrl);
+                        const data = await response.json();
+                        
+                        if (data && data.contents) {
+                            // Parse HTML to find links
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(data.contents, 'text/html');
+                            const links = doc.querySelectorAll('a');
+                            
+                            // Process each link
+                            links.forEach(link => {
+                                if (link.href) {
+                                    try {
+                                        let href = link.href;
+                                        
+                                        // Fix relative URLs
+                                        if (href.startsWith('/')) {
+                                            href = baseUrl + href;
+                                        } else if (href.startsWith('./')) {
+                                            href = baseUrl + href.substring(1);
+                                        } else if (!href.startsWith('http')) {
+                                            return; // Skip non-http links like mailto:
+                                        }
+                                        
+                                        // Parse the URL
+                                        const url = new URL(href);
+                                        
+                                        // Only include URLs from the same hostname
+                                        if (url.hostname === domain) {
+                                            // Clean the URL (remove fragments, etc.)
+                                            const cleanUrl = url.origin + url.pathname;
+                                            
+                                            // Skip URLs with query parameters to avoid duplicate content
+                                            if (!url.search && !cleanUrl.includes('#') && !discoveredUrls.has(cleanUrl)) {
+                                                discoveredUrls.add(cleanUrl);
+                                                urlQueue.push(cleanUrl);
+                                                
+                                                // Add to our list
+                                                addUrlToList(cleanUrl);
+                                            }
+                                        }
+                                    } catch (e) {
+                                        // Skip invalid URLs
+                                    }
+                                }
+                            });
+                        }
+                    } catch (error) {
+                        console.error("Error crawling URL:", currentUrl, error);
+                    }
+                    
+                    // Add a small delay to avoid overloading
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
+                
+                // Update UI to reflect completion
+                document.getElementById("crawl-status-text").textContent = "Crawling complete!";
+                document.getElementById("crawl-details").textContent = `Found ${urlList.length} unique pages on ${domain}`;
+                document.getElementById("crawl-progress-bar").style.width = "100%";
+                
+                // If no URLs were found, alert the user
+                if (urlList.length <= 1) {
+                    alert("Few or no links were discovered. This might be due to the website's structure or restrictions.");
+                }
+                
+            } catch (error) {
+                document.getElementById("crawl-status-text").textContent = "Crawling failed";
+                document.getElementById("crawl-details").textContent = "Error: " + error.message;
+                console.error("Crawl error:", error);
+            } finally {
+                // Remove spinner, re-enable button
+                crawlButton.disabled = false;
+                crawlButton.innerHTML = '<i class="fas fa-spider mr-2"></i> Crawl Website';
+            }
+        }
+        
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+        
+        // Generate XML Sitemap
+        document.getElementById("generate-button").addEventListener("click", function() {
+            if (urlList.length === 0) {
+                const websiteUrl = document.getElementById("website-url").value.trim();
+                if (!websiteUrl) {
+                    alert("Please add at least one URL to your sitemap");
+                    return;
+                }
+                // Add the main website URL if no other URLs are present
+                addUrlToList(websiteUrl);
+            }
+            
+            // Hide analysis container if visible
+            document.getElementById("analysis-container").classList.add("hidden");
+            
+            const changeFreq = document.getElementById("change-freq").value;
+            const priority = document.getElementById("priority").value;
+            
+            // Generate the XML
+            const xmlContent = generateSitemapXML(urlList, changeFreq, priority);
+            
+            // Display the XML
+            document.getElementById("xml-output").textContent = xmlContent;
+            document.getElementById("results-container").classList.remove("hidden");
+            
+            // Scroll to results
+            document.getElementById("results-container").scrollIntoView({ behavior: 'smooth' });
+            
+            // Enable download functionality
+            const downloadButton = document.getElementById("download-button");
+            downloadButton.onclick = function() {
+                downloadSitemap(xmlContent);
+            };
+            
+            // Enable copy functionality
+            const copyButton = document.getElementById("copy-button");
+            copyButton.onclick = function() {
+                navigator.clipboard.writeText(xmlContent)
+                    .then(() => {
+                        const originalText = copyButton.innerHTML;
+                        copyButton.innerHTML = '<i class="fas fa-check mr-2"></i> Copied!';
+                        setTimeout(() => {
+                            copyButton.innerHTML = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        alert('Error copying to clipboard: ' + err);
+                    });
+            };
+        });
+        
+        function generateSitemapXML(urls, changeFreq, priority) {
+            const date = new Date().toISOString();
+            let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+            xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
+            
+            urls.forEach(url => {
+                xml += '  <url>\n';
+                xml += `    <loc>${escapeXml(url)}</loc>\n`;
+                xml += `    <lastmod>${date}</lastmod>\n`;
+                xml += `    <changefreq>${changeFreq}</changefreq>\n`;
+                xml += `    <priority>${priority}</priority>\n`;
+                xml += '  </url>\n';
+            });
+            
+            xml += '</urlset>';
+            return xml;
+        }
+        
+        function escapeXml(unsafe) {
+            return unsafe.replace(/[<>&'"]/g, function (c) {
+                switch (c) {
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '&': return '&amp;';
+                    case '\'': return '&apos;';
+                    case '"': return '&quot;';
+                }
+            });
+        }
+        
+        function downloadSitemap(xmlContent) {
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/xml;charset=utf-8,' + encodeURIComponent(xmlContent));
+            element.setAttribute('download', 'sitemap.xml');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+        
+        // Sitemap Analysis
+        document.getElementById("analyze-button").addEventListener("click", function() {
+            if (urlList.length === 0) {
+                alert("Please add some URLs to analyze");
+                return;
+            }
+            
+            // Hide results container if visible
+            document.getElementById("results-container").classList.add("hidden");
+            
+            // Analyze the sitemap
+            analyzeUrls(urlList);
+            
+            // Show analysis container
+            document.getElementById("analysis-container").classList.remove("hidden");
+            
+            // Scroll to analysis
+            document.getElementById("analysis-container").scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        function analyzeUrls(urls) {
+            // Calculate basic metrics
+            const totalUrls = urls.length;
+            document.getElementById("total-urls").textContent = totalUrls;
+            
+            // Calculate sitemap size
+            const changeFreq = document.getElementById("change-freq").value;
+            const priority = document.getElementById("priority").value;
+            const xmlContent = generateSitemapXML(urls, changeFreq, priority);
+            const sizeInBytes = new Blob([xmlContent]).size;
+            const sizeInKB = (sizeInBytes / 1024).toFixed(2);
+            document.getElementById("sitemap-size").textContent = sizeInKB + " KB";
+            
+            // Calculate max URL depth
+            let maxDepth = 0;
+            
+            // Get base domain for comparison
+            let baseDomain = "";
+            if (urls.length > 0) {
+                try {
+                    baseDomain = new URL(urls[0]).hostname;
+                } catch (e) {}
+            }
+            
+            // Analyze URLs by depth
+            const urlsByDepth = {};
+            let urlsWithoutSlash = 0;
+            let urlsWithQueryParams = 0;
+            let urlsWithFragments = 0;
+            
+            urls.forEach(url => {
+                try {
+                    const parsedUrl = new URL(url);
+                    const path = parsedUrl.pathname;
+                    
+                    // Check if URL has trailing slash
+                    if (path.length > 1 && !path.endsWith('/')) {
+                        urlsWithoutSlash++;
+                    }
+                    
+                    // Check for query parameters
+                    if (parsedUrl.search) {
+                        urlsWithQueryParams++;
+                    }
+                    
+                    // Check for fragments
+                    if (parsedUrl.hash) {
+                        urlsWithFragments++;
+                    }
+                    
+                    // Calculate depth (number of segments in path)
+                    const segments = path.split('/').filter(Boolean);
+                    const depth = segments.length;
+                    
+                    if (depth > maxDepth) {
+                        maxDepth = depth;
+                    }
+                    
+                    urlsByDepth[depth] = (urlsByDepth[depth] || 0) + 1;
+                    
+                } catch (e) {
+                    // Skip invalid URLs
+                }
+            });
+            
+            document.getElementById("url-depth").textContent = maxDepth;
+            
+            // Generate URL analysis HTML
+            let analysisHtml = `
+                <div class="overflow-x-auto">
+                    <table class="min-w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="py-2 px-4 text-left text-sm font-medium text-gray-700">Metric</th>
+                                <th class="py-2 px-4 text-right text-sm font-medium text-gray-700">Count</th>
+                                <th class="py-2 px-4 text-right text-sm font-medium text-gray-700">Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+            
+            // Add rows for URL depth distribution
+            Object.keys(urlsByDepth).sort((a, b) => a - b).forEach(depth => {
+                const count = urlsByDepth[depth];
+                const percentage = ((count / totalUrls) * 100).toFixed(1);
+                
+                analysisHtml += `
+                    <tr class="border-b">
+                        <td class="py-2 px-4 text-sm text-gray-700">URLs with depth ${depth}</td>
+                        <td class="py-2 px-4 text-right text-sm text-gray-700">${count}</td>
+                        <td class="py-2 px-4 text-right text-sm text-gray-700">${percentage}%</td>
+                    </tr>`;
+            });
+            
+            // Add other metrics
+            analysisHtml += `
+                <tr class="border-b">
+                    <td class="py-2 px-4 text-sm text-gray-700">URLs without trailing slash</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${urlsWithoutSlash}</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${((urlsWithoutSlash / totalUrls) * 100).toFixed(1)}%</td>
+                </tr>
+                <tr class="border-b">
+                    <td class="py-2 px-4 text-sm text-gray-700">URLs with query parameters</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${urlsWithQueryParams}</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${((urlsWithQueryParams / totalUrls) * 100).toFixed(1)}%</td>
+                </tr>
+                <tr>
+                    <td class="py-2 px-4 text-sm text-gray-700">URLs with fragments</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${urlsWithFragments}</td>
+                    <td class="py-2 px-4 text-right text-sm text-gray-700">${((urlsWithFragments / totalUrls) * 100).toFixed(1)}%</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>`;
+            
+            document.getElementById("url-analysis").innerHTML = analysisHtml;
+            
+            // Generate recommendations
+            const recommendations = [];
+            
+            if (totalUrls > 50000) {
+                recommendations.push("Your sitemap exceeds the 50,000 URL limit. Consider splitting it into multiple sitemap files.");
+            }
+            
+            if (sizeInBytes > 10 * 1024 * 1024) {
+                recommendations.push("Your sitemap exceeds the 10MB size limit. Consider splitting it into multiple sitemap files.");
+            }
+            
+            if (urlsWithoutSlash > 0) {
+                recommendations.push("Consider adding trailing slashes to all URLs for consistency.");
+            }
+            
+            if (urlsWithQueryParams > 0) {
+                recommendations.push("URLs with query parameters were found. Consider whether these should be included in your sitemap or excluded to avoid duplicate content.");
+            }
+            
+            if (urlsWithFragments > 0) {
+                recommendations.push("URLs with fragments (#) were found. Search engines typically ignore fragments, so these may be unnecessary in your sitemap.");
+            }
+            
+            if (maxDepth > 4) {
+                recommendations.push("Some URLs have a high depth (more than 4 levels deep). Consider flattening your site structure for better SEO.");
+            }
+            
+            // Update recommendations list
+            const recommendationsHtml = recommendations.length > 0 
+                ? recommendations.map(rec => `<li>${rec}</li>`).join('')
+                : '<li>Your sitemap appears to be well-structured. No specific recommendations at this time.</li>';
+            
+            document.getElementById("sitemap-recommendations").innerHTML = recommendationsHtml;
+        }
+        
+        // Toggle menu functionality
+        const toggleMenu = document.getElementById('toggleMenu');
+        const toggleClose = document.getElementById('toggleClose');
+        const collapseMenu = document.getElementById('collapseMenu');
+
+        if (toggleMenu) {
+            toggleMenu.addEventListener('click', function() {
+                if (collapseMenu.classList.contains('max-lg:hidden')) {
+                    collapseMenu.classList.remove('max-lg:hidden');
+                } else {
+                    collapseMenu.classList.add('max-lg:hidden');
+                }
+            });
+        }
+
+        if (toggleClose) {
+            toggleClose.addEventListener('click', function() {
+                collapseMenu.classList.add('max-lg:hidden');
+            });
+        }
+    </script>
+</body>
+</html> 

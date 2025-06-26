@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader (Client-Side)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #ff0000;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #cc0000;
+        }
+        #downloadOptions {
+            margin-top: 20px;
+            display: none;
+        }
+        .format-option {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .format-option:hover {
+            background: #e0e0e0;
+        }
+        .note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Video Downloader</h1>
+        <input type="text" id="videoUrl" placeholder="Paste YouTube video URL here">
+        <button onclick="processUrl()">Get Download Options</button>
+        <div id="downloadOptions">
+            <h3>Available Formats</h3>
+            <div id="formatsList"></div>
+            <p class="note">Note: Click a format to simulate download. Actual downloading requires external tools.</p>
+        </div>
+    </div>
+
+    <script>
+        function processUrl() {
+            const url = document.getElementById('videoUrl').value.trim();
+            if (!url || (!url.includes('youtube.com') && !url.includes('youtu.be'))) {
+                alert('Please enter a valid YouTube URL (e.g., https://www.youtube.com/watch?v=VIDEO_ID)');
+                return;
+            }
+
+            // Simulated format options since we can't fetch real ones client-side
+            const formats = [
+                { type: 'MP4', quality: '1080p', size: '150MB' },
+                { type: 'MP4', quality: '720p', size: '90MB' },
+                { type: 'MP4', quality: '480p', size: '50MB' },
+                { type: 'MP3', quality: 'Audio Only', size: '10MB' }
+            ];
+
+            displayFormats(formats, url);
+        }
+
+        function displayFormats(formats, url) {
+            const formatsList = document.getElementById('formatsList');
+            const downloadOptions = document.getElementById('downloadOptions');
+            formatsList.innerHTML = '';
+
+            formats.forEach(format => {
+                const div = document.createElement('div');
+                div.className = 'format-option';
+                div.innerHTML = `${format.type} - ${format.quality} (${format.size}) <button onclick="simulateDownload('${format.type}', '${format.quality}', '${url}')">Download</button>`;
+                formatsList.appendChild(div);
+            });
+
+            downloadOptions.style.display = 'block';
+        }
+
+        function simulateDownload(type, quality, url) {
+            // Simulate a download action since actual downloading isn't possible client-side
+            alert(`Simulating download for ${type} - ${quality}\nURL: ${url}\n\nFor actual downloads, use a tool like 'youtube-dl' or a browser extension.`);
+            
+            // Optionally, redirect to a third-party site (commented out for now)
+            // window.open(`https://example-downloader.com?url=${encodeURIComponent(url)}&format=${type}-${quality}`, '_blank');
+        }
+    </script>
+</body>
+</html>

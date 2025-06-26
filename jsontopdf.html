@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON to PDF Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4 mt-8 max-w-md bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center mb-6">JSON to PDF Converter</h1>
+        
+        <div class="space-y-4">
+            <!-- File Input -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Upload JSON File</label>
+                <input type="file" id="json-input" accept=".json,application/json" class="block w-full p-2 border border-gray-300 rounded-lg file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+            </div>
+            
+            <!-- Or Paste JSON -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Or Paste JSON Here</label>
+                <textarea id="json-textarea" rows="5" class="w-full p-2 border border-gray-300 rounded-lg" placeholder='{"name":"John","age":30,"city":"New York"}'></textarea>
+            </div>
+            
+            <!-- Convert Button -->
+            <button id="convert-button" type="button" class="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+                Convert to PDF
+            </button>
+        </div>
+
+        <!-- Status Message -->
+        <div id="status-message" class="mt-4 text-center text-gray-600 hidden">
+            <p>Processing your JSON data...</p>
+            <div class="mt-2 w-full bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div id="output-container" class="mt-6 text-center hidden">
+            <h2 class="text-xl font-semibold mb-4">Conversion Complete</h2>
+            <div class="mb-4 p-4 bg-gray-50 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="mt-2">Your PDF is ready to download!</p>
+            </div>
+            <button id="download-button" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                Download PDF
+            </button>
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="mt-4 p-4 bg-red-50 text-red-700 rounded-lg hidden">
+            <p id="error-text"></p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize jsPDF
+        const { jsPDF } = window.jspdf;
+        
+        // DOM elements
+        const jsonInput = document.getElementById('json-input');
+        const jsonTextarea = document.getElementById('json-textarea');
+        const convertButton = document.getElementById('convert-button');
+        const downloadButton = document.getElementById('download-button');
+        const outputContainer = document.getElementById('output-container');
+        const statusMessage = document.getElementById('status-message');
+        const progressBar = document.getElementById('progress-bar');
+        const errorMessage = document.getElementById('error-message');
+        const errorText = document.getElementById('error-text');
+        
+        let pdfData = null;
+
+        convertButton.addEventListener('click', async () => {
+            let jsonData;
+            
+            // Hide previous messages
+            outputContainer.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+            statusMessage.classList.remove('hidden');
+            
+            try {
+                // Check if file was uploaded
+                if (jsonInput.files.length > 0) {
+                    const file = jsonInput.files[0];
+                    jsonData = await readFileAsText(file);
+                } 
+                // Otherwise check if text was pasted
+                else if (jsonTextarea.value.trim() !== '') {
+                    jsonData = jsonTextarea.value;
+                } 
+                else {
+                    throw new Error('Please provide JSON data either by uploading a file or pasting it.');
+                }
+                
+                // Parse JSON
+                const parsedData = JSON.parse(jsonData);
+                
+                // Simulate progress (in a real app, this would be during PDF generation)
+                simulateProgress();
+                
+                // Generate PDF after a short delay to show progress
+                setTimeout(() => {
+                    generatePDF(parsedData);
+                    statusMessage.classList.add('hidden');
+                    outputContainer.classList.remove('hidden');
+                }, 1500);
+                
+            } catch (error) {
+                showError(error.message);
+                console.error('Conversion error:', error);
+            }
+        });
+
+        downloadButton.addEventListener('click', () => {
+            if (pdfData) {
+                pdfData.save('converted-data.pdf');
+            }
+        });
+
+        function readFileAsText(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = event => resolve(event.target.result);
+                reader.onerror = error => reject(error);
+                reader.readAsText(file);
+            });
+        }
+
+        function generatePDF(data) {
+            // Create new PDF document
+            const doc = new jsPDF();
+            
+            // Add title
+            doc.setFontSize(20);
+            doc.text('JSON Data Export', 105, 20, { align: 'center' });
+            
+            // Check if data is an array of objects (for table display)
+            if (Array.isArray(data) && data.length > 0 && typeof data[0] === 'object') {
+                // Convert array of objects to table
+                const headers = Object.keys(data[0]);
+                const rows = data.map(obj => headers.map(header => obj[header]));
+                
+                // Add table to PDF
+                doc.autoTable({
+                    head: [headers],
+                    body: rows,
+                    startY: 30,
+                    styles: { cellPadding: 5, fontSize: 10 },
+                    headStyles: { fillColor: [41, 128, 185], textColor: 255 }
+                });
+            } 
+            else if (typeof data === 'object') {
+                // For single object, display as key-value pairs
+                let y = 30;
+                doc.setFontSize(12);
+                
+                for (const [key, value] of Object.entries(data)) {
+                    doc.text(`${key}: ${JSON.stringify(value)}`, 15, y);
+                    y += 10;
+                    
+                    // Add new page if we're running out of space
+                    if (y > 280) {
+                        doc.addPage();
+                        y = 20;
+                    }
+                }
+            } 
+            else {
+                // For simple values (string, number, etc.)
+                doc.setFontSize(12);
+                doc.text(`Value: ${JSON.stringify(data)}`, 15, 30);
+            }
+            
+            // Save the PDF data for download
+            pdfData = doc;
+        }
+
+        function simulateProgress() {
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+        }
+
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.remove('hidden');
+            statusMessage.classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
