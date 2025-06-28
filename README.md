@@ -1,5 +1,3 @@
-
-📄 PDFMaster.fun
 PDFMaster.fun is a web-based tool that allows users to view, annotate, and manage PDF files directly in their browser. It integrates seamlessly with GitHub Pages, making deployment and hosting straightforward.
 
 🚀 Features
