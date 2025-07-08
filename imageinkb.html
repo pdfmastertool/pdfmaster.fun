@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Image Compressor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-6">
+  <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
+    <h1 class="text-2xl font-bold text-gray-800 mb-4">Image Compressor</h1>
+    <p class="text-gray-600 mb-6">Upload an image and compress it to a target size</p>
+
+    <!-- Image Upload -->
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="image-upload">Choose an image</label>
+      <input 
+        type="file" 
+        id="image-upload" 
+        accept="image/*" 
+        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+      >
+    </div>
+
+    <!-- Target Size Dropdown -->
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="target-size">Select Target Size</label>
+      <select id="target-size" class="w-full p-2 border rounded">
+        <option value="51200">50 KB</option>
+        <option value="102400" selected>100 KB</option>
+        <option value="204800">200 KB</option>
+        <option value="512000">500 KB</option>
+        <option value="614400">600 KB</option>
+        <option value="2097152">2 MB</option>
+      </select>
+    </div>
+
+    <!-- Quality Slider -->
+    <div class="mb-6 hidden" id="quality-control">
+      <label class="block text-gray-700 text-sm font-bold mb-2" for="quality">Compression Quality (0–1)</label>
+      <input 
+        type="range" 
+        id="quality" 
+        min="0" 
+        max="1" 
+        step="0.01" 
+        value="0.8" 
+        class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+      >
+      <div class="flex justify-between text-xs text-gray-500 mt-1">
+        <span>Low (smaller file)</span>
+        <span>High (better quality)</span>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="mb-6 hidden" id="preview-section">
+      <h2 class="text-lg font-semibold text-gray-800 mb-2">Preview</h2>
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <p class="text-sm text-gray-600 mb-1">Original</p>
+          <img id="original-preview" class="max-w-full h-auto rounded border border-gray-200">
+          <p id="original-size" class="text-xs text-gray-500 mt-1"></p>
+        </div>
+        <div class="flex-1">
+          <p class="text-sm text-gray-600 mb-1">Compressed</p>
+          <img id="compressed-preview" class="max-w-full h-auto rounded border border-gray-200">
+          <p id="compressed-size" class="text-xs text-gray-500 mt-1"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="flex justify-between">
+      <button 
+        id="compress-btn" 
+        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled
+      >
+        Compress
+      </button>
+      <button 
+        id="download-btn" 
+        class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded hidden"
+      >
+        Download
+      </button>
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="mt-4 text-sm"></div>
+
+    <!-- Instructions -->
+    <div class="mt-6 p-4 bg-white border-t border-gray-200 text-gray-700 text-sm">
+      <h2 class="text-base font-semibold text-gray-800 mb-2">📝 How to Use:</h2>
+      <ol class="list-decimal list-inside space-y-2">
+        <li><strong>Upload:</strong> Select a JPG or PNG file.</li>
+        <li><strong>Target:</strong> Choose target file size (e.g. 100 KB).</li>
+        <li><strong>Adjust:</strong> Use slider to tweak quality.</li>
+        <li><strong>Compress:</strong> Click “Compress” and wait for result.</li>
+        <li><strong>Download:</strong> Save the compressed image.</li>
+      </ol>
+      <p class="mt-3 text-xs text-gray-500">
+        ⚠️ Ideal for profile uploads, documents, WhatsApp sharing, etc.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const imageUpload = document.getElementById('image-upload');
+      const compressBtn = document.getElementById('compress-btn');
+      const downloadBtn = document.getElementById('download-btn');
+      const qualityControl = document.getElementById('quality');
+      const previewSection = document.getElementById('preview-section');
+      const qualityControlSection = document.getElementById('quality-control');
+      const originalPreview = document.getElementById('original-preview');
+      const compressedPreview = document.getElementById('compressed-preview');
+      const originalSize = document.getElementById('original-size');
+      const compressedSize = document.getElementById('compressed-size');
+      const status = document.getElementById('status');
+      const targetSizeSelect = document.getElementById('target-size');
+
+      let originalImage = null;
+      let compressedImageBlob = null;
+
+      imageUpload.addEventListener('change', handleImageUpload);
+      compressBtn.addEventListener('click', compressImage);
+      downloadBtn.addEventListener('click', downloadImage);
+      qualityControl.addEventListener('input', updateQualityValue);
+
+      function handleImageUpload(e) {
+        const file = e.target.files[0];
+        if (!file || !file.type.match('image.*')) {
+          status.textContent = 'Please select an image file.';
+          status.className = 'text-red-500';
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          originalImage = new Image();
+          originalImage.onload = function () {
+            originalPreview.src = event.target.result;
+            originalSize.textContent = `Size: ${formatFileSize(file.size)}`;
+            previewSection.classList.remove('hidden');
+            qualityControlSection.classList.remove('hidden');
+            compressBtn.disabled = false;
+            status.textContent = 'Ready to compress. Adjust quality if needed.';
+            status.className = 'text-green-500';
+          };
+          originalImage.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function compressImage() {
+        if (!originalImage) return;
+
+        const targetSize = parseInt(targetSizeSelect.value); // in bytes
+        const quality = parseFloat(qualityControl.value);
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = originalImage.width;
+        let height = originalImage.height;
+        let attempts = 0;
+
+        status.textContent = 'Compressing...';
+        status.className = 'text-blue-500';
+
+        function attemptCompression(w, h, q) {
+          canvas.width = w;
+          canvas.height = h;
+          ctx.drawImage(originalImage, 0, 0, w, h);
+          canvas.toBlob(function (blob) {
+            if (!blob) {
+              status.textContent = 'Compression failed.';
+              status.className = 'text-red-500';
+              return;
+            }
+
+            if (blob.size <= targetSize || attempts >= 6) {
+              compressedImageBlob = blob;
+              compressedPreview.src = URL.createObjectURL(blob);
+              compressedSize.textContent = `Size: ${formatFileSize(blob.size)}`;
+              downloadBtn.classList.remove('hidden');
+
+              if (blob.size <= targetSize) {
+                status.textContent = `Success! Compressed to ${formatFileSize(blob.size)}`;
+                status.className = 'text-green-500';
+              } else {
+                status.textContent = `Couldn't reach ${formatFileSize(targetSize)}. Closest: ${formatFileSize(blob.size)}`;
+                status.className = 'text-yellow-500';
+              }
+            } else {
+              attempts++;
+              const ratio = Math.sqrt(targetSize / blob.size);
+              const newW = Math.max(100, Math.floor(w * ratio * 0.95));
+              const newH = Math.max(100, Math.floor(h * ratio * 0.95));
+              const newQ = Math.max(0.1, q * 0.9);
+              attemptCompression(newW, newH, newQ);
+            }
+          }, 'image/jpeg', q);
+        }
+
+        attemptCompression(width, height, quality);
+      }
+
+      function downloadImage() {
+        if (!compressedImageBlob) return;
+        const url = URL.createObjectURL(compressedImageBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'compressed-image.jpg';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+
+      function updateQualityValue() {
+        const value = qualityControl.value;
+        const percentage = Math.round(value * 100);
+        status.textContent = `Quality set to ${percentage}%`;
+        status.className = 'text-gray-500';
+      }
+
+      function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' bytes';
+        else if (bytes < 1048576) return (bytes / 1024).toFixed(2) + ' KB';
+        else return (bytes / 1048576).toFixed(2) + ' MB';
+      }
+    });
+  </script>
+</body>
+</html>
