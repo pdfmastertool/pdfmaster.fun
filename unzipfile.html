@@ -1,0 +1,102 @@
+<div class="zip-tool">
+    <h2>Unzip File Tool</h2>
+    <input type="file" id="zipInput" accept=".zip">
+    <button onclick="unzipFile()">Unzip File</button>
+    <div id="result"></div>
+</div>
+
+<style>
+    .zip-tool {
+        max-width: 450px;
+        margin: 30px auto;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 15px 0;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        background: #fff;
+        color: #333;
+    }
+    button {
+        background: #fff;
+        color: #2E7D32;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #C8E6C9;
+    }
+    #result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #fff;
+        color: #000;
+        border-radius: 5px;
+        display: none;
+    }
+    .download-btn {
+        display: block;
+        margin-top: 10px;
+        padding: 10px;
+        background: #2E7D32;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .download-btn:hover {
+        background: #1B5E20;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+    function unzipFile() {
+        let zipFile = document.getElementById("zipInput").files[0];
+        let resultDiv = document.getElementById("result");
+        
+        if (!zipFile) {
+            alert("Please select a ZIP file to extract");
+            return;
+        }
+        
+        let reader = new FileReader();
+        reader.readAsArrayBuffer(zipFile);
+        reader.onload = function (e) {
+            let zip = new JSZip();
+            zip.loadAsync(e.target.result).then(function (unzipped) {
+                resultDiv.innerHTML = "<b>Extracted Files:</b><br>";
+                resultDiv.style.display = "block";
+                
+                Object.keys(unzipped.files).forEach(function (filename) {
+                    unzipped.files[filename].async("blob").then(function (fileData) {
+                        let fileURL = URL.createObjectURL(fileData);
+                        resultDiv.innerHTML += `<a download="${filename}" href="${fileURL}" class="download-btn">Download ${filename}</a><br>`;
+                    });
+                });
+            });
+        };
+    }
+</script>
+<br>
+<h2>How to Use Unzip File Tool?</h2>
+<p>This tool allows you to extract files from a ZIP archive easily. Select a ZIP file and click 'Unzip File' to download the extracted files.</p><br>
+<p><b>Benefits of Using This Tool:</b></p>
+<ul>
+    <li>Quickly extract multiple files from a ZIP archive.</li>
+    <li>Simple and user-friendly interface.</li>
+    <li>Mobile-friendly and fast processing.</li>
+</ul>
+<br>

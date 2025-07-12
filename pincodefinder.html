@@ -1,0 +1,87 @@
+<div class="pincode-tool">
+    <h2>Pin Code Finder Tool</h2>
+    <input type="text" id="pincodeInput" placeholder="Enter Pin Code">
+    <button onclick="fetchPinDetails()">Find Details</button>
+    <div id="result"></div>
+</div>
+
+<style>
+    .pincode-tool {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: #fff;
+    }
+    input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+    }
+    button {
+        background: #fff;
+        color: #007bff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #e0f7fa;
+    }
+    #result {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff;
+        color: #000;
+        border-radius: 5px;
+        display: none;
+    }
+</style>
+
+<script>
+    function fetchPinDetails() {
+        let pinCode = document.getElementById("pincodeInput").value;
+        let resultDiv = document.getElementById("result");
+        
+        if(pinCode === "") {
+            alert("Please enter a Pin Code");
+            return;
+        }
+        
+        fetch(`https://api.postalpincode.in/pincode/${pinCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data[0].Status === "Success") {
+                    let postOffice = data[0].PostOffice[0];
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = `<b>District:</b> ${postOffice.District}<br>
+                                          <b>State:</b> ${postOffice.State}<br>
+                                          <b>Country:</b> ${postOffice.Country}`;
+                } else {
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = "Invalid Pin Code!";
+                }
+            })
+            .catch(error => {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = "Error fetching details!";
+            });
+    }
+</script>
+<br>
+<h2>How to Use Pin Code Finder Tool?</h2>
+<p>This tool helps you find details about any location using its Pin Code. Just enter a valid Pin Code in the input box and click on the 'Find Details' button. The tool will display district, state, and country information.</p><br>
+<p><b>Benefits of Using This Tool:</b></p>
+<ul>
+    <li>Quickly fetch location details.</li>
+    <li>Easy to use and mobile-friendly.</li>
+    <li>Accurate and reliable data.</li>
+</ul>
+<br>

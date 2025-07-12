@@ -1,0 +1,72 @@
+<div class="ip-checker-tool">
+    <h2>What is My IP?</h2>
+    <button onclick="getUserIP()">Show My IP</button>
+    <div id="ip-result-box">
+        <h3>Your IP Address:</h3>
+        <p id="ip-result">Click the button to see your IP</p>
+    </div>
+</div>
+
+<style>
+    .ip-checker-tool {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 2px solid #ff9800;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(255, 152, 0, 0.3);
+        text-align: center;
+        font-family: Arial, sans-serif;
+        background: #f8f9fa;
+    }
+    .ip-checker-tool h2 {
+        margin-bottom: 15px;
+        color: #ff9800;
+    }
+    .ip-checker-tool button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        background-color: #ff9800;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .ip-checker-tool button:hover {
+        background-color: #e68900;
+    }
+    #ip-result-box {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #ff9800;
+        border-radius: 5px;
+        background: #fff3e0;
+        color: #e68900;
+        display: none;
+        text-align: center;
+    }
+</style>
+
+<script>
+    function getUserIP() {
+        fetch('https://api64.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('ip-result').innerText = data.ip;
+                document.getElementById('ip-result-box').style.display = 'block';
+            })
+            .catch(error => {
+                document.getElementById('ip-result').innerText = 'Could not fetch IP';
+                document.getElementById('ip-result-box').style.display = 'block';
+            });
+    }
+</script>
+<br>
+<!-- Blog Post Below Tool -->
+<h2>What is My IP? - Know Your IP Address Instantly</h2>
+<p>Have you ever wondered what your IP address is? Your IP address is your unique identifier on the internet. It helps websites, services, and networks recognize your device. Knowing your IP address can be useful for troubleshooting, security checks, and setting up remote access.</p><br>
+<p>Our "What is My IP" tool makes it super easy to find your IP address. Simply click on the "Show My IP" button, and your IP will be displayed instantly. No need to install any software or go through complicated steps.</p><br>
+<p>This tool is especially useful for tech enthusiasts, network administrators, and anyone who wants to check their internet connection details. Give it a try and find out your IP address right away!</p><br>

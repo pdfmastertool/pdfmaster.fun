@@ -1,0 +1,88 @@
+<div class="ifsc-tool">
+    <h2>IFSC Code Finder Tool</h2>
+    <input id="ifscInput" type="text" />
+    <button onclick="fetchIFSCDetails()">Find Details</button>
+    <div id="result"></div>
+</div>
+
+<style>
+    .ifsc-tool {
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        text-align: center;
+        background: linear-gradient(135deg, #ff7eb3, #ff758c);
+        color: #fff;
+    }
+    input {
+        width: 80%;
+        padding: 10px;
+        margin: 10px 0;
+        border: none;
+        border-radius: 5px;
+    }
+    button {
+        background: #fff;
+        color: #ff758c;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #ffebee;
+    }
+    #result {
+        margin-top: 15px;
+        padding: 10px;
+        background: #fff;
+        color: #000;
+        border-radius: 5px;
+        display: none;
+    }
+</style>
+
+<script>
+    function fetchIFSCDetails() {
+        let ifscCode = document.getElementById("ifscInput").value;
+        let resultDiv = document.getElementById("result");
+        
+        if(ifscCode === "") {
+            alert("Please enter IFSC Code");
+            return;
+        }
+        
+        fetch(`https://ifsc.razorpay.com/${ifscCode}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.BRANCH) {
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = `<b>Bank:</b> ${data.BANK}<br>
+                                          <b>Branch:</b> ${data.BRANCH}<br>
+                                          <b>Address:</b> ${data.ADDRESS}<br>
+                                          <b>City:</b> ${data.CITY}<br>
+                                          <b>State:</b> ${data.STATE}`;
+                } else {
+                    resultDiv.style.display = "block";
+                    resultDiv.innerHTML = "Invalid IFSC Code!";
+                }
+            })
+            .catch(error => {
+                resultDiv.style.display = "block";
+                resultDiv.innerHTML = "Error fetching details!";
+            });
+    }
+</script>
+<br />
+<h2 style="text-align: left;">How to Use IFSC Code Finder Tool?</h2>
+<p>This tool helps you find details about any bank branch using its IFSC code. Just enter a valid IFSC code in the input box and click on the 'Find Details' button. The tool will display bank name, branch, address, city, and state.</p><br />
+<h3 style="text-align: left;"><b>Benefits of Using This Tool:</b></h3>
+<ul>
+    <li>Quickly fetch bank details.</li>
+    <li>Easy to use and mobile-friendly.</li>
+    <li>Accurate and reliable data.</li>
+</ul>
+<br />

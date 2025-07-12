@@ -1,0 +1,95 @@
+<div class="home-loan-calculator">
+    <h2>Home Loan Calculator</h2>
+    <label>Loan Amount (₹):</label>
+    <input id="home-loan-amount" type="number" />
+    
+    <label>Annual Interest Rate (%):</label>
+    <input id="home-interest-rate" type="number" />
+    
+    <label>Loan Tenure (Years):</label>
+    <input id="home-loan-tenure" type="number" />
+    
+    <button onclick="calculateHomeLoanEMI()">Calculate EMI</button>
+    <div id="home-result-box">
+        <h3>Result</h3>
+        <p id="home-result"></p>
+    </div>
+</div>
+
+<style>
+    .home-loan-calculator {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(0, 123, 255, 0.3);
+        text-align: center;
+        font-family: Arial, sans-serif;
+        background: #f8f9fa;
+    }
+    .home-loan-calculator h2 {
+        margin-bottom: 15px;
+        color: #007bff;
+    }
+    .home-loan-calculator input, .home-loan-calculator button {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+    }
+    .home-loan-calculator button {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    .home-loan-calculator button:hover {
+        background-color: #218838;
+    }
+    #home-result-box {
+        margin-top: 15px;
+        padding: 10px;
+        border: 1px solid #28a745;
+        border-radius: 5px;
+        background: #d4edda;
+        color: #155724;
+        display: none;
+        text-align: left;
+    }
+</style>
+
+<script>
+    function calculateHomeLoanEMI() {
+        var loanAmount = parseFloat(document.getElementById('home-loan-amount').value);
+        var interestRate = parseFloat(document.getElementById('home-interest-rate').value) / 100 / 12;
+        var loanTenure = parseInt(document.getElementById('home-loan-tenure').value) * 12;
+        
+        if (isNaN(loanAmount) || isNaN(interestRate) || isNaN(loanTenure) || loanAmount <= 0 || loanTenure <= 0) {
+            document.getElementById('home-result').innerText = 'Please enter valid values!';
+            document.getElementById('home-result-box').style.display = 'block';
+            return;
+        }
+        
+        var emi = (loanAmount * interestRate * Math.pow(1 + interestRate, loanTenure)) / (Math.pow(1 + interestRate, loanTenure) - 1);
+        var totalPayment = emi * loanTenure;
+        var totalInterest = totalPayment - loanAmount;
+        
+        document.getElementById('home-result').innerHTML = `<strong>Home Loan EMI Details:</strong><br>
+            Monthly EMI: ₹${emi.toFixed(2)}<br>
+            Total Interest Payable: ₹${totalInterest.toFixed(2)}<br>
+            Total Payment (Principal + Interest): ₹${totalPayment.toFixed(2)}`;
+        
+        document.getElementById('home-result-box').style.display = 'block';
+    }
+</script>
+
+<!--Blog Post Below Tool-->
+<h2>Home Loan Calculator - Apni EMI Kaise Jane?</h2>
+<p>Agar aap apne sapno ka ghar lene ka plan bana rahe hain aur loan lene ka soch rahe hain, toh hamara Home Loan Calculator aapke liye bahut useful hoga. Yeh tool aapko batayega ki aapko har mahine kitni EMI chukani hogi, total interest kitna lagega aur overall payment kitni hogi.</p><br />
+<p>Is tool ka use karna bahut hi aasaan hai. Aapko sirf loan amount, annual interest rate aur loan tenure enter karna hai aur "Calculate EMI" button par click karna hai. Bas ek second me aapko exact EMI details mil jayengi.</p><br />
+<p>Yeh tool specially un logon ke liye hai jo apna ghar lene ke liye loan lene ka soch rahe hain aur EMI planning pehle se karna chahte hain. Iska interface simple aur mobile-friendly hai, jise aap kisi bhi device par use kar sakte hain.</p><br />
+<p>Agar aap apni Home Loan EMI calculate karna chahte hain, toh hamara Home Loan Calculator aapke liye perfect hai!</p><br />

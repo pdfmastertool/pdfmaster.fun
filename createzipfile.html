@@ -1,0 +1,97 @@
+<div class="zip-creator-tool">
+    <h2>Create ZIP File</h2>
+    <input type="file" id="fileInput" multiple>
+    <button onclick="createZip()">Create ZIP</button>
+    <div id="result"></div>
+</div>
+
+<style>
+    .zip-creator-tool {
+        max-width: 450px;
+        margin: 30px auto;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        background: linear-gradient(135deg, #ff6f61, #d32f2f);
+        color: #fff;
+        font-family: Arial, sans-serif;
+    }
+    input {
+        width: 90%;
+        padding: 10px;
+        margin: 15px 0;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        background: #fff;
+        color: #333;
+    }
+    button {
+        background: #fff;
+        color: #d32f2f;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #ffccbc;
+    }
+    #result {
+        margin-top: 20px;
+        padding: 15px;
+        background: #fff;
+        color: #000;
+        border-radius: 5px;
+        display: none;
+    }
+    .download-btn {
+        display: block;
+        margin-top: 15px;
+        padding: 10px;
+        background: #d32f2f;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    .download-btn:hover {
+        background: #b71c1c;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+    function createZip() {
+        let files = document.getElementById("fileInput").files;
+        let resultDiv = document.getElementById("result");
+        
+        if (files.length === 0) {
+            alert("Please select files to create a ZIP");
+            return;
+        }
+        
+        let zip = new JSZip();
+        Array.from(files).forEach(file => {
+            zip.file(file.name, file);
+        });
+        
+        zip.generateAsync({ type: "blob" }).then(function (content) {
+            let zipURL = URL.createObjectURL(content);
+            resultDiv.style.display = "block";
+            resultDiv.innerHTML = `<b>ZIP File Created:</b><br>
+                                   <a download="files.zip" href="${zipURL}" class="download-btn">Download ZIP</a>`;
+        });
+    }
+</script>
+<br>
+<h2>How to Use ZIP File Creator?</h2>
+<p>This tool helps you create a ZIP file from multiple files easily. Select your files and click 'Create ZIP' to download the compressed archive.</p><br>
+<p><b>Benefits of Using This Tool:</b></p>
+<ul>
+    <li>Quickly compress multiple files into a ZIP.</li>
+    <li>Easy to use and mobile-friendly.</li>
+    <li>Fast processing with an instant download option.</li>
+</ul>
+<br>
